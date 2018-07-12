@@ -4,6 +4,12 @@
   "parameters": {
     "deployNs": {
       "value": "zcds"
+    },
+    "sqlserverAdminLogin": {
+      "value": "dbadmin"
+    },
+    "sqlserverAdminPassword": {
+      "value": "Password1"
     }
   }
 }

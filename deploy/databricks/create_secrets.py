@@ -5,7 +5,6 @@ import logging
 import json
 import dotenv
 
-
 def main():
     """ 
     Creates necessary scopes and secrets in Databricks workspace
@@ -44,6 +43,16 @@ def main():
     create_or_update_secret(api_url, token, scope, secret_name="textanalytics_endpoint",
                             secret_value=os.getenv("TEXTANALYTICS_ENDPOINT"))
 
+
+    create_or_update_secret(api_url, token, scope, secret_name="sql_server_name",
+                            secret_value=os.getenv("SQL_SERVER_NAME"))
+    create_or_update_secret(api_url, token, scope, secret_name="sql_server_database",
+                            secret_value=os.getenv("SQL_SERVER_DATABASE"))
+    create_or_update_secret(api_url, token, scope, secret_name="sql_admin_login",
+                            secret_value=os.getenv("SQL_ADMIN_LOGIN"))
+    create_or_update_secret(api_url, token, scope, secret_name="sql_admin_password",
+                            secret_value=os.getenv("SQL_ADMIN_PASSWORD"))
+
     # Go over local environment variables and search for DBENV_ variables
     for env_var in os.environ:
         if env_var.startswith('DBENV_'):
@@ -56,8 +65,11 @@ def create_or_update_secret(api_url, token, scope, secret_name, secret_value):
     Creates or updates secrets in Databricks workspace. 
     It will create or reuse existing scopes in the workspace and will overwrite existing secrets.
     """
+    logger = logging.getLogger(__name__)
+    
     if not is_scope_exists(api_url, token, scope):
         create_scope(api_url, token, scope)
+    logger.info("Setting environment variable " + secret_name + "...")
     create_secret(api_url, token, scope, secret_name, secret_value)
 
 

@@ -79,6 +79,50 @@
       "metadata": {
         "description": "Cognitive services text analytics name"
       }
+    },
+    "sqlServerName": {
+      "defaultValue": "[concat(parameters('deployNs'), 'sqlsrv', uniqueString(resourceGroup().id))]",
+      "type": "string",
+      "metadata": {
+        "description": "SQL Server Name"
+      }
+    },
+    "sqlDatabaseName": {
+      "defaultValue": "[concat(parameters('deployNs'), 'socialdb', uniqueString(resourceGroup().id))]",
+      "type": "string",
+      "metadata": {
+        "description": "SQL Social Database Name"
+      }
+    },
+    "sqlserverAdminLogin": {
+      "defaultValue": "[concat('l', uniqueString(resourceGroup().id, '9A08DDB9-95A1-495F-9263-D89738ED4205'))]",
+      "type": "string",
+      "metadata": {
+        "description": "SQL Database Administrator User Name"
+      }
+    },
+    "sqlserverAdminPassword": {
+      "defaultValue": "[concat('P', uniqueString(resourceGroup().id, '224F5A8B-51DB-46A3-A7C8-59B0DD584A41'), 'x', '!')]",
+      "type": "string",
+      "metadata": {
+        "description": "SQL Database Administrator Password"
+      }
+    },
+    "sqldatabaseEdition": {
+      "defaultValue": "Standard",
+      "type": "string"
+    },
+    "sqldatabaseCollation": {
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS",
+      "type": "string"
+    },
+    "sqldatabaseMaxSizeBytes": {
+      "defaultValue": "268435456000",
+      "type": "string"
+    },
+    "sqlrequestedServiceObjectiveName": {
+      "defaultValue": "S0",
+      "type": "string"
     }
   },
   "variables": {
@@ -231,6 +275,50 @@
       "scale": null,
       "properties": {},
       "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Sql/servers",
+      "kind": "v12.0",
+      "name": "[parameters('sqlServerName')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "westeurope",
+      "scale": null,
+      "properties": {
+        "administratorLogin": "[parameters('sqlserverAdminLogin')]",
+        "administratorLoginPassword": "[parameters('sqlserverAdminPassword')]",
+        "version": "12.0"
+      },
+      "dependsOn": [],
+      "resources": [
+        {
+          "apiVersion": "2015-05-01-preview",
+          "name": "[parameters('sqlDatabaseName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+          ],
+          "properties": {
+            "edition": "[parameters('sqldatabaseEdition')]",
+            "collation": "[parameters('sqldatabaseCollation')]",
+            "maxSizeBytes": "[parameters('sqldatabaseMaxSizeBytes')]",
+            "requestedServiceObjectiveName": "[parameters('sqlrequestedServiceObjectiveName')]"
+          }
+        },
+        {
+          "apiVersion": "2015-05-01-preview",
+          "type": "Microsoft.Sql/servers/firewallrules",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+          ],
+          "location": "[resourceGroup().location]",
+          "name": "[concat(parameters('sqlserverName'), '/', 'AllowAllWindowsAzureIps')]",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        }
+      ]
     }
   ],
   "outputs": {
@@ -260,6 +348,22 @@
     },
     "eventhubAlertsName": {
       "value": "[parameters('eventhubAlertsName')]",
+      "type": "string"
+    },
+    "sqlServerName": {
+      "value": "[parameters('sqlServerName')]",
+      "type": "string"
+    },
+    "sqlDatabaseName": {
+      "value": "[parameters('sqlDatabaseName')]",
+      "type": "string"
+    },
+    "sqlServerAdminLogin": {
+      "value": "[parameters('sqlserverAdminLogin')]",
+      "type": "string"
+    },
+    "sqlServerAdminPassword": {
+      "value": "[parameters('sqlserverAdminPassword')]",
       "type": "string"
     },
     "textanalyticsKey1": {

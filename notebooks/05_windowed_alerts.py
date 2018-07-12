@@ -74,7 +74,7 @@ ds = windowedItems \
   .writeStream \
   .format("eventhubs") \
   .options(**ehWriteConf) \
-  .option("checkpointLocation", "/mnt/tmp/05_alerts_checkpoint.tmp") \
+  .option("checkpointLocation", "/mnt/tmp/05_alerts.chkpnt.tmp") \
   .start()
 
 # COMMAND ----------

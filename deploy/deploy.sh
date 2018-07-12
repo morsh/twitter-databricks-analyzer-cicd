@@ -148,6 +148,12 @@ eventhubs_key=$(az eventhubs namespace authorization-rule keys list \
 textanalytics_key1=$(echo $arm_output | jq -r '.properties.outputs.textanalyticsKey1.value')
 textanalytics_endpoint=$(echo $arm_output | jq -r '.properties.outputs.textanalyticsEndpoint.value')
 
+# SQL Configuration
+sql_server_name=$(echo $arm_output | jq -r '.properties.outputs.sqlServerName.value')
+sql_database_name=$(echo $arm_output | jq -r '.properties.outputs.sqlDatabaseName.value')
+sql_admin_login=$(echo $arm_output | jq -r '.properties.outputs.sqlServerAdminLogin.value')
+sql_admin_password=$(echo $arm_output | jq -r '.properties.outputs.sqlServerAdminPassword.value')
+
 # Build .env file
 echo "Appending configuration to .env file."
 echo "" >> $env_file
@@ -164,4 +170,8 @@ echo "TEXTANALYTICS_KEY1=${textanalytics_key1}" >> $env_file
 echo "TEXTANALYTICS_ENDPOINT=${textanalytics_endpoint}" >> $env_file
 echo "DBRICKS_DOMAIN=${dbricks_location}.azuredatabricks.net" >> $env_file
 echo "DBRICKS_TOKEN=${dbi_token}" >> $env_file
+echo "SQL_SERVER_NAME=${sql_server_name}" >> $env_file
+echo "SQL_SERVER_DATABASE=${sql_database_name}" >> $env_file
+echo "SQL_ADMIN_LOGIN=${sql_admin_login}" >> $env_file
+echo "SQL_ADMIN_PASSWORD=${sql_admin_password}" >> $env_file
 echo "# --------------------------------------------------------------" >> $env_file

@@ -32,12 +32,18 @@ requirements: test_environment
 
 ## Deploy infrastructure (Just ARM template)
 deploy_resources: 
-	deploy/deploy.sh trends-rg westeurope
+	deploy/deploy.sh morshe-social-rg westeurope
+
+## Create secrets in Databricks
+create_secrets:
+	$(PYTHON_INTERPRETER) deploy/databricks/create_secrets.py
+
+## Configure Databricks
+configure_databricks:
+	deploy/databricks/configure.sh
 
 ## Deploys entire solution
-deploy: deploy_resources
-	$(PYTHON_INTERPRETER) deploy/databricks/create_secrets.py
-	deploy/databricks/configure.sh
+deploy: deploy_resources create_secrets configure_databricks
 
 ## Delete all compiled Python files 
 clean:

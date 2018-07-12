@@ -1,9 +1,10 @@
 // Databricks notebook source
-// Databricks notebook source
 import java.util._
 import java.util.concurrent._
 import com.microsoft.azure.eventhubs._
 import scala.collection.JavaConverters._
+
+val queryTwitterTopic = "russia"
 
 val eventhub_namespace = dbutils.preview.secret.get("storage_scope", "eventhub_namespace")
 val eventhub_input = dbutils.preview.secret.get("storage_scope", "eventhub_input")
@@ -48,8 +49,7 @@ val twitter = twitterFactory.getInstance()
 
 // Getting tweets with keyword "Azure" and sending them to the Event Hub in realtime!
 
-// val query = new Query(" #harrypotter ")
-val query = new Query("russia")
+val query = new Query(queryTwitterTopic)
 query.setCount(100)
 query.lang("en")
 var finished = false

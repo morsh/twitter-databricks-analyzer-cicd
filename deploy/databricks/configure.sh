@@ -41,23 +41,33 @@ NC='\033[0m'
 wait_for_run () {
     # See here: https://docs.azuredatabricks.net/api/latest/jobs.html#jobsrunresultstate
     declare mount_run_id=$1
-    declare wait_for_state=${2:-""}^^
+    declare wait_for_state=${2:-""}
+
+    if [[ -z $wait_for_state ]]; then
+        printf "Waiting for job $mount_run_id to complete..."
+    else 
+        printf "Waiting for job $mount_run_id to have status <$wait_for_state>..."
+    fi
+
     while : ; do
         life_cycle_status=$(databricks runs get --run-id $mount_run_id | jq -r ".state.life_cycle_state")
         result_state=$(databricks runs get --run-id $mount_run_id | jq -r ".state.result_state")
         if [[ $result_state == "SUCCESS" || $result_state == "SKIPPED" ]]; then
+            echo ""
             break;
         elif [[ $life_cycle_status == "INTERNAL_ERROR" || $result_state == "FAILED" ]]; then
+            echo ""
             echo -e "${RED} error running job, details ahead"
             run_status=$(databricks runs get --run-id $mount_run_id)
             err_msg=$(echo $run_status | jq -r ".state.state_message")
             echo -e "${RED}Error while running ${mount_run_id}: ${err_msg} ${NC}"
             exit 1
         elif [[ $wait_for_state && $life_cycle_status == $wait_for_state ]]; then
+            echo ""
             echo "The job ${mount_run_id} has reached status ${wait_for_state}"
             break;
         else 
-            echo "Waiting for run ${mount_run_id} to finish..."
+            printf "."
             sleep 30s
         fi
     done
@@ -127,21 +137,39 @@ _main() {
     fi
 
     # Attach library
-    echo "Installing libraries..."
-    databricks libraries install --maven-coordinates com.microsoft.azure:azure-eventhubs-spark_2.11:2.3.1 --cluster-id $cluster_id
-    databricks libraries install --maven-coordinates org.apache.bahir:spark-streaming-twitter_2.11:2.2.0 --cluster-id $cluster_id
+    bash ./deploy-libraries.sh $cluster_id
     # TODO: python library
     # TODO: generalize to dependency file
 
     # Upload notebooks and dashboards
     echo "Uploading notebooks..."
-    databricks workspace import_dir "../../notebooks" "/social" --overwrite
+    databricks workspace import_dir "../../notebooks" "/notebooks" --overwrite
+
+    continuousJobs=()
 
     # For each job in the config folder, stop any existing running jobs and start the new job
-    echo "Searching for job runs to stop..."
+    echo "Going over jobs to execute..."
     # TODO: check if assured order if not add sort
-    for f in ./config/run.*.config.json; do
-        for jn in "$(cat "$f" | jq -r ".run_name")"; do
+    #for f in ./config/run.*.config.json; do
+    for filePath in $(ls -v $PWD/config/run.*.config.json); do
+
+        if [[ -z $filePath || "$filePath" == " " ]]; then
+            echo "No files found to run"
+            continue
+        fi
+
+        filename=$(basename "$filePath")
+        type="$(cut -d'.' -f1 <<<"$filename")"
+        serial="$(cut -d'.' -f2 <<<"$filename")"
+        runType="$(cut -d'.' -f3 <<<"$filename")"
+
+        # Naming check
+        if [[ $runType != 'continuous' && $runType != 'once' ]]; then
+            echo "$filename is not in the format of run.<serial>.<continuous|once>.<name>.config.json"
+            continue
+        fi
+
+        for jn in "$(cat "$filePath" | jq -r ".run_name")"; do
 
             # Search for active running jobs and stop them
             declare runids=$(databricks runs list --active-only --output JSON | jq -c ".runs // []" | jq -c "[.[] | select(.run_name == \"$jn\")]" | jq .[].run_id)
@@ -151,26 +179,20 @@ _main() {
             done
 
             # Descern if the next execution should be continuous or a one time execution and execute accordingly
-            if [[ $jn == 'Continuous:'* ]]; then
-                echo "Running job $jn and waiting for status to be <Running>..."
-                wait_for_run $(databricks runs submit --json-file "$f" | jq -r ".run_id" ) "RUNNING"
+            if [[ $runType == 'continuous' ]]; then
+                echo "Running job $jn..."
+                continuousJobs+=($(databricks runs submit --json-file "$filePath" | jq -r ".run_id" ))
             else 
                 echo "Running job $jn and waiting for completion..."
-                wait_for_run $(databricks runs submit --json-file "$f" | jq -r ".run_id" )
+                wait_for_run $(databricks runs submit --json-file "$filePath" | jq -r ".run_id" )
             fi
-        done 
+        done
     done
-    
-    # , mount storage and setup up tables
-    # echo "Mounting blob storage. This may take a while as cluster spins up..."
-    # wait_for_run $(databricks runs submit --json-file "./config/run.mountstorage.config.json" | jq -r ".run_id" )
-    # echo "Starting injest tweets. This may take a while as cluster spins up..."
-    # wait_for_run $(databricks runs submit --json-file "./config/run.injesttweets.config.json" | jq -r ".run_id" ) "RUNNING"
-    # echo "Starting windowed timeline. This may take a while as cluster spins up..."
-    # wait_for_run $(databricks runs submit --json-file "./config/run.injesttweets.config.json" | jq -r ".run_id" ) "RUNNING"
 
-    # Schedule and run jobs
-    # databricks jobs run-now --job-id $(databricks jobs create --json-file "./config/job.ingestdata.config.json" | jq ".job_id")
+    echo "Waiting for job runs to run..."
+    for jobId in ${continuousJobs[@]}; do
+        wait_for_run $jobId "RUNNING"
+    done
 }
 
 _main
