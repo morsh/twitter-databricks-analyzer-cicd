@@ -57,9 +57,11 @@ statement = connection.createStatement
 val ensureStatement = s"""
 if not exists (select * from sysobjects where name='${tableName}' and xtype='U')
     create table ${tableName} (
-        EventId varchar(64) not null,
-        EventTime TIMESTAMP not null,
-        Payload text
+        UniqueId nvarchar(37),
+        TweetTime datetime,
+        Content text,
+        Language nvarchar(10),
+        Topic nvarchar(255)
     )
 """
 

@@ -1,25 +1,19 @@
 # Databricks notebook source
-# Global imports...
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
-# COMMAND ----------
-
-# Set up the connection parameters...
 eventhub_namespace = dbutils.preview.secret.get(scope = "storage_scope", key = "eventhub_namespace")
 eventhub_enriched = dbutils.preview.secret.get(scope = "storage_scope", key = "eventhub_enriched")
 eventhub_key = dbutils.preview.secret.get(scope = "storage_scope", key = "eventhub_key")
 readConnectionString = "Endpoint=sb://{ns}.servicebus.windows.net/;" \
                        "EntityPath={name};SharedAccessKeyName=RootManageSharedAccessKey;" \
                        "SharedAccessKey={key}".format(ns=eventhub_namespace, name=eventhub_enriched, key=eventhub_key)
-
 ehReadConf = {
   'eventhubs.connectionString': readConnectionString
 }
 
 # COMMAND ----------
 
-# Connect to the IoT Hub...
 inputStream = spark.readStream \
   .format("eventhubs") \
   .options(**ehReadConf) \
@@ -51,7 +45,7 @@ bodyWithSchema = bodyNoSchema.select("body", from_json(col("body"), schema).alia
 
 # Filter down to just the data that we're looking for...
 # Watermarking to account for late arriving events
-itemHistoryDF = bodyWithSchema \
+challenge3 = bodyWithSchema \
   .withColumn("eventId", col("data.eventId")) \
   .withColumn("dataItemId", col("data.dataItemId")) \
   .withColumn("eventName", col("data.eventName")) \
@@ -60,11 +54,10 @@ itemHistoryDF = bodyWithSchema \
   .withColumn("sentiment", col("data.data.sentiment")) \
   .withColumn("location", col("data.data.location.name")) \
   .withColumn("location_entity", col("data.data.location.entity")) \
-  .withColumn("eventTime", col("Time").cast(TimestampType()))
+  .withColumn("eventTime", col("Time").cast(TimestampType())) \
+  .withWatermark("Time", "10 minute") \
 
-display(itemHistoryDF)
-  
-itemHistoryDF.createOrReplaceTempView("ItemHistory")
+challenge3.createOrReplaceTempView("ChallengeData")
 
 # COMMAND ----------
 
@@ -73,12 +66,12 @@ itemHistoryDF.createOrReplaceTempView("ItemHistory")
 # MAGIC import org.apache.spark.sql.ForeachWriter
 # MAGIC 
 # MAGIC // Create the query to be persisted...
-# MAGIC val dfItemHistory = spark.sql("SELECT body, eventId, dataItemId, eventName, eventTopic, category, sentiment, location, location_entity, eventTime FROM ItemHistory")
+# MAGIC val dfPersistence = spark.sql("Select category, window.start as windowStart, count(*) as ItemCount from ChallengeData GROUP BY category, WINDOW(Time, '5 minutes')")
 # MAGIC 
-# MAGIC display(dfItemHistory)
+# MAGIC display(dfPersistence)
 # MAGIC 
 # MAGIC // Writing to SQL
-# MAGIC val historyQuery = dfItemHistory.writeStream.foreach(new ForeachWriter[Row] {
+# MAGIC val persistenceQuery = dfPersistence.writeStream.foreach(new ForeachWriter[Row] {
 # MAGIC   var connection:java.sql.Connection = _
 # MAGIC   var statement:java.sql.Statement = _
 # MAGIC    
@@ -101,19 +94,12 @@ itemHistoryDF.createOrReplaceTempView("ItemHistory")
 # MAGIC   }
 # MAGIC   
 # MAGIC   def process(value: Row): Unit = {
-# MAGIC     val body = (value(0) + "").replaceAll("'", "''")
-# MAGIC     val eventId = value(1)
-# MAGIC     val dataItemId = value(2)
-# MAGIC     val eventName = value(3)
-# MAGIC     val eventTopic = value(4)
-# MAGIC     val category = value(5)
-# MAGIC     val sentiment = value(6)
-# MAGIC     val location = (value(7) + "").replaceAll("'", "''")
-# MAGIC     val location_entity = (value(8) + "").replaceAll("'", "''")
-# MAGIC     val eventTime = value(9)
+# MAGIC     val category = value(0)
+# MAGIC     val windowStartTime = value(1)
+# MAGIC     val itemCount = value(2)
 # MAGIC     
-# MAGIC     val valueStr = s"'${body}', '${eventId}', '${dataItemId}', '${eventName}', '${eventTopic}', '${category}', ${sentiment}, '${location}', '${location_entity}', '${eventTime}'"
-# MAGIC     val statementStr = s"INSERT INTO ${tableName} (body, eventId, dataItemId, eventName, eventTopic, category, sentiment, location, location_entity, eventTime) VALUES (${valueStr})"
+# MAGIC     val valueStr = s"'${category}', '${windowStartTime}', ${itemCount}"
+# MAGIC     val statementStr = s"INSERT INTO ${tableName} (Category, windowStart, ItemCount) VALUES (${valueStr})"
 # MAGIC     
 # MAGIC     statement.execute(statementStr)
 # MAGIC   }
@@ -123,12 +109,7 @@ itemHistoryDF.createOrReplaceTempView("ItemHistory")
 # MAGIC   }
 # MAGIC })
 # MAGIC 
-# MAGIC val streamingQuery = historyQuery.start()
-
-# COMMAND ----------
-
-# MAGIC %scala
-# MAGIC streamingQuery.stop()
+# MAGIC val streamingQuery = persistenceQuery.start()
 
 # COMMAND ----------
 
