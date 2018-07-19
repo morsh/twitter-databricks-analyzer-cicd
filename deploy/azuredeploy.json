@@ -123,6 +123,18 @@
     "sqlrequestedServiceObjectiveName": {
       "defaultValue": "S0",
       "type": "string"
+    },
+    "sendGridName": {
+      "defaultValue": "[concat(parameters('deployNs'), 'sgemails', uniqueString(resourceGroup().id))]",
+      "type": "string"
+    },
+    "sendGridPassword": {
+      "defaultValue": "[concat('P', uniqueString(resourceGroup().id, '1B6725E8-BA8B-4A68-8971-1DE435A52B54'), 'x', '!')]",
+      "type": "string"
+    },
+    "sendGridToAddress": {
+      "defaultValue": "",
+      "type": "string"
     }
   },
   "variables": {
@@ -319,6 +331,23 @@
           }
         }
       ]
+    },
+    {
+      "apiVersion": "2015-01-01",
+      "name": "[parameters('sendGridName')]",
+      "type": "Sendgrid.Email/accounts",
+      "location": "[resourceGroup().location]",
+      "plan": {
+        "name": "free",
+        "publisher": "Sendgrid",
+        "product": "sendgrid_azure",
+        "promotionCode": ""
+      },
+      "properties": {
+        "password": "[parameters('sendGridPassword')]",
+        "acceptMarketingEmails": false,
+        "email": ""
+      }
     }
   ],
   "outputs": {
@@ -373,6 +402,22 @@
     "textanalyticsEndpoint": {
       "type": "string",
       "value": "[reference(parameters('textAnalyticsName'),'2016-02-01-preview').endpoint]"
+    },
+    "toAddress": {
+      "type": "string",
+      "value": "[parameters('toAddress')]"
+    },
+    "sendgridSmtpServer": {
+      "type": "string",
+      "value": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendgridAccountName'))).smtpServer]"
+    },
+    "sendgridUsername": {
+      "type": "string",
+      "value": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendgridAccountName'))).username]"
+    },
+    "sendgridPassword": {
+      "type": "string",
+      "value": "[parameters('sendgridPassword')]"
     }
   }
 }
