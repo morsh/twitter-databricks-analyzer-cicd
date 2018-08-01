@@ -16,7 +16,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo .travis/install.sh
+  - .travis/install.sh
 
 script:
-  - sudo .travis/test.sh
+  - .travis/test.sh
