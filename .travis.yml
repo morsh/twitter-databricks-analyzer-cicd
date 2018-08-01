@@ -9,7 +9,7 @@ addons:
     update: true
 install:
   - sudo apt-get update
-  - sudo ./deploy/travis/install.sh
+  - sudo $TRAVIS_BUILD_DIR/deploy/travis/install.sh
 # command to run tests
 script:
-  - sudo ./deploy/travis/test.sh
+  - sudo $TRAVIS_BUILD_DIR/deploy/travis/test.sh
