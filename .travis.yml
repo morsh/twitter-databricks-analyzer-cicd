@@ -7,10 +7,9 @@ sudo: enabled
 addons:
   apt:
     update: true
-before-install:
+install:
   - sudo apt-get update
   - sudo apt-get install azure-cli
-install:
   - make requirements
 # command to run tests
 script:
