@@ -1,8 +1,8 @@
-# Introduction
+# Social Posts Pipeline [![Build Status](https://travis-ci.org/morsh/social-posts-pipeline.svg?branch=master)](https://travis-ci.org/morsh/social-posts-pipeline)
 
 The following is a Social Post Sentiment processing pipeline implemented within [Azure Databricks](https://azure.microsoft.com/en-au/services/databricks/). 
 
-## Data Pipeline Architecture [![Build Status](https://travis-ci.org/morsh/social-posts-pipeline.svg?branch=master)](https://travis-ci.org/morsh/social-posts-pipeline)
+## Data Pipeline Architecture
 ![Pipelin Architecture](/docs/SocialPipeline.png)
 
 # Deployment
