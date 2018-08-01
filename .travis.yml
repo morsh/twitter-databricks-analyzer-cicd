@@ -1,15 +1,22 @@
 language: python
+
 python:
   - "2.7"
+
 virtualenv:
   system_site_packages: true
-sudo: enabled
+
+sudo: required
+
 addons:
   apt:
     update: true
+
+before_install:
+  - sudo apt-get update -qq
+
 install:
-  - sudo apt-get update
-  - sudo $TRAVIS_BUILD_DIR/deploy/travis/install.sh
-# command to run tests
+  - sudo .travis/install.sh
+
 script:
-  - sudo $TRAVIS_BUILD_DIR/deploy/travis/test.sh
+  - sudo .travis/test.sh
