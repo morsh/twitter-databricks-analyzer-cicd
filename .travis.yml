@@ -5,7 +5,7 @@ virtualenv:
   system_site_packages: true
 sudo: enabled
 install:
-  - ./scripts/travis-install.sh
+  - ./deploy/travis/install.sh
 # command to run tests
 script:
-  - ./scripts/travis-test.sh
+  - ./deploy/travis/test.sh
