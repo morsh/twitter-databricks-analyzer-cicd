@@ -4,6 +4,12 @@ python:
 virtualenv:
   system_site_packages: true
 sudo: enabled
+addons:
+  apt:
+    update: true
+before-install:
+  - sudo apt-get update
+  - sudo apt-get install azure-cli
 install:
   - ./deploy/travis/install.sh
 # command to run tests
