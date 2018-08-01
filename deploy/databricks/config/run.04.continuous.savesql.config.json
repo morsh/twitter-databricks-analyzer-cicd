@@ -1,5 +1,5 @@
 {
-    "run_name": "Enrichment",
+    "run_name": "Save To SQL",
     "new_cluster": {
         "spark_version": "4.1.x-scala2.11",
         "node_type_id": "Standard_D3_v2",

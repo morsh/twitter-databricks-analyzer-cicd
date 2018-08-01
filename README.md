@@ -33,6 +33,18 @@ The deployment is done using [Python Virtual Environment](https://docs.python-gu
 - When prompted for a token, you can [generate a new token](https://docs.databricks.com/api/latest/authentication.html) in the databricks workspace.
 - To view additional make commands run `make`
 
+# Make Options
+
+- `make test_environment`: Test python environment is setup correctly
+- `make requirements`: Install Python Dependencies
+- `make deploy_resources`: Deploy infrastructure (Just ARM template)
+- `make create_secrets`: Create secrets in Databricks
+- `make configure_databricks`: Configure Databricks
+- `make deploy`: Deploys entire solution
+- `make clean`: Delete all compiled Python files
+- `make lint`: Lint using flake8
+- `make create_environment`: Set up python interpreter environment
+
 # Potential Issues
 
 > org.apache.spark.SparkException: Job aborted due to stage failure: Task 0 in stage 145.0 failed 4 times, most recent failure: Lost task 0.3 in stage 145.0 (TID 1958, 10.139.64.4, executor 0): org.apache.spark.SparkException: Failed to execute user defined function($anonfun$9: (string) => string)
