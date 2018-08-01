@@ -9,8 +9,7 @@ addons:
     update: true
 install:
   - sudo apt-get update
-  - sudo apt-get install azure-cli
-  - make requirements
+  - sudo ./deploy/travis/install.sh
 # command to run tests
 script:
   - sudo ./deploy/travis/test.sh
