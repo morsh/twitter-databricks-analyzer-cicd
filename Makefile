@@ -32,7 +32,7 @@ requirements: test_environment
 
 ## Deploy infrastructure (Just ARM template)
 deploy_resources: 
-	deploy/deploy.sh morshe-social-rg westeurope
+	deploy/deploy.sh $(resource-group-name) $(region) $(subscription-name)
 
 ## Create secrets in Databricks
 create_secrets:

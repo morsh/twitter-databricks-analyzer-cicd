@@ -11,6 +11,11 @@
     "libraries": [
         {
             "maven": {
+                "coordinates": "com.microsoft.azure:azure-eventhubs-spark_2.11:2.3.1"
+            }
+        },
+        {
+            "maven": {
                 "coordinates": "com.microsoft.sqlserver:mssql-jdbc:6.5.3.jre8-preview"
             }
         },
