@@ -435,7 +435,7 @@
             "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName')),'2015-05-01-preview').key1)]",
             "WEBSITE_CONTENTSHARE": "[toLower(parameters('emailFunctionAppName'))]",
             "EVENTHUBS_CONNECTIONSTRING": "[listkeys(resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventhubsNsName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]",
-            "EVENTHUBS_EH_NAME": "[variables('eventhubAlertsName')]",
+            "EVENTHUBS_EH_NAME": "[parameters('eventhubAlertsName')]",
             "FUNCTIONS_EXTENSION_VERSION": "~1"
           }
         },
@@ -444,7 +444,8 @@
           "name": "web",
           "type": "sourcecontrols",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/', parameters('emailFunctionAppName'))]"
+            "[resourceId('Microsoft.Web/sites/', parameters('emailFunctionAppName'))]",
+            "[resourceId('Microsoft.Web/sites/config', parameters('emailFunctionAppName'), 'appsettings')]"
           ],
           "properties": {
             "RepoUrl": "[parameters('emailFunctionAppRepoUrl')]",

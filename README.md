@@ -2,6 +2,9 @@
 
 The following is a Social Post Sentiment processing pipeline implemented within [Azure Databricks](https://azure.microsoft.com/en-au/services/databricks/). 
 
+## Data Pipeline Architecture
+![Pipelin Architecture](/docs/SocialPipeline.png)
+
 # Deployment
 
 Ensure you are in the root of the repository and logged in to the Azure cli by running `az login`.
