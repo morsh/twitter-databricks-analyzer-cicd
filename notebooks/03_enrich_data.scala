@@ -66,16 +66,12 @@ import org.json4s.jackson.JsonMethods._
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
 
 def getLanguage (text: String): String = {
-  val jpayload = parse(s"""
-        {
-          "documents": [
-            {
-              "id": "1",
-              "text": "${escapeJava(text)}"
-            }
-          ]
-        }
-       """, useBigDecimalForDouble = true)
+  val jpayload = 
+     ("documents" -> 
+       List(
+         ("id" -> "1") ~
+         ("text" -> escapeJava(text))
+       ))
   
   val response = processUsingApi(languagesUrl, compact(render(jpayload)))
 
@@ -96,20 +92,16 @@ def getLanguage (text: String): String = {
 
 def getEntities (text: String): List[String] = {
   val language = getLanguage(text)
-  val jpayload = parse(s"""
-        {
-          "documents": [
-            {
-              "id": "1",
-              "language": "${language}",
-              "text": "${escapeJava(text)}"
-            }
-          ]
-        }
-       """, useBigDecimalForDouble = true)
+  val jpayload = 
+     ("documents" -> 
+       List(
+         ("id" -> "1") ~
+         ("language" -> language) ~
+         ("text" -> escapeJava(text))
+       ))
 
   val response = processUsingApi(entitiesUrl, compact(render(jpayload)))
-  println(response)
+  
   val jresult = parse(response, useBigDecimalForDouble = true);
   val jentities = ((jresult \ "documents")(0) \ "entities" \ "name")
   var entities = List("None")
