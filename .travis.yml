@@ -14,4 +14,4 @@ install:
   - make requirements
 # command to run tests
 script:
-  - ./deploy/travis/test.sh
+  - sudo ./deploy/travis/test.sh
