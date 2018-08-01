@@ -11,7 +11,7 @@ before-install:
   - sudo apt-get update
   - sudo apt-get install azure-cli
 install:
-  - ./deploy/travis/install.sh
+  - make requirements
 # command to run tests
 script:
   - ./deploy/travis/test.sh
