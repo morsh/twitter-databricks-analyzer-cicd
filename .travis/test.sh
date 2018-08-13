@@ -1,2 +1,2 @@
-make test_environment
+make configure_databricks
 exit 0
