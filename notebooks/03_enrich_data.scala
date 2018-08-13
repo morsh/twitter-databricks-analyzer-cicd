@@ -82,9 +82,15 @@ def getLanguage (text: String): String = {
     case _ => false
   }
 
-  val extractedLanguage = (((jresult \ "documents")(0) \ "detectedLanguages")(0) \ "iso6391Name").extract[String]
-  if (extractedLanguage != null && !extractedLanguage.isEmpty()) {
-    language = extractedLanguage
+  if ((jresult \ "documents") != JNothing && 
+      (jresult \ "documents")(0) != JNothing &&
+      ((jresult \ "documents")(0) \ "detectedLanguages") != JNothing &&
+      ((jresult \ "documents")(0) \ "detectedLanguages")(0) != JNothing) {
+
+    val extractedLanguage = (((jresult \ "documents")(0) \ "detectedLanguages")(0) \ "iso6391Name").extract[String]
+    if (extractedLanguage != null && !extractedLanguage.isEmpty()) {
+      language = extractedLanguage
+    }
   }
 
   return language
@@ -103,13 +109,18 @@ def getEntities (text: String): List[String] = {
   val response = processUsingApi(entitiesUrl, compact(render(jpayload)))
   
   val jresult = parse(response, useBigDecimalForDouble = true);
-  val jentities = ((jresult \ "documents")(0) \ "entities" \ "name")
   var entities = List("None")
-  if (jentities != JNothing) {
-    if (jentities.isInstanceOf[JString]) {
-      entities = List(jentities.extract[String])
-    } else {
-      entities = jentities.extract[List[String]]
+
+  if ((jresult \ "documents") != JNothing && 
+      (jresult \ "documents")(0) != JNothing &&
+      ((jresult \ "documents")(0) \ "entities") != JNothing) {
+    val jentities = ((jresult \ "documents")(0) \ "entities" \ "name")
+    if (jentities != JNothing) {
+      if (jentities.isInstanceOf[JString]) {
+        entities = List(jentities.extract[String])
+      } else {
+        entities = jentities.extract[List[String]]
+      }
     }
   }
 

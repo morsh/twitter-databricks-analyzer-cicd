@@ -1,2 +1,2 @@
-echo 'ok'
+make test
 exit 0
