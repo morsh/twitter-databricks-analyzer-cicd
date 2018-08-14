@@ -22,4 +22,8 @@ before_script:
   - .travis/login.sh
 
 script:
-  - travis_wait 3 .travis/test.sh
+  # Output something every 10 minutes or Travis kills the job
+  - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
+  - .travis/test.sh
+  # Killing background sleep loop
+  - kill %1
