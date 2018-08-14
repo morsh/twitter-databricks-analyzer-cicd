@@ -122,6 +122,9 @@ _main() {
         yes_or_no "Are you sure you want to continue (Y/N)?" || { exit 1; }  
     fi
 
+    # Check if databricks is configured and populate the configuration file if not
+    bash ./configure-cli-auth.sh
+
     # Create initial cluster, if not yet exists
     # TODO: Currently should be removed because jobs creates cluster - or remove from jobs
     cluster_config="./config/cluster.config.json"
