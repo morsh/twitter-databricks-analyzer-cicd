@@ -135,6 +135,42 @@
     "sendGridToAddress": {
       "defaultValue": "",
       "type": "string"
+    },
+    "svcPlanName": {
+      "defaultValue": "[concat(parameters('deployNs'), 'svcplan', uniqueString(resourceGroup().id))]",
+      "type": "string",
+      "metadata": {
+        "description": "The name of the App Service plan to create for hosting the logic app."
+      }
+    },
+    "svcPlanSKU": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Free",
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "The pricing tier for the app service plan."
+      }
+    },
+    "emailFunctionAppName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('deployNs'), 'emailfunc', uniqueString(resourceGroup().id))]"
+    },
+    "emailFunctionAppRepoUrl": {
+      "type": "string",
+      "defaultValue": "https://github.com/morsh/social-alert-notifier"
+    },
+    "emailFunctionAppBranch": {
+      "type": "string",
+      "defaultValue": "master"
+    },
+    "emailFunctionAppManualIntegration": {
+      "type": "bool",
+      "defaultValue": false
     }
   },
   "variables": {
@@ -348,6 +384,76 @@
         "acceptMarketingEmails": false,
         "email": ""
       }
+    },
+    {
+      "name": "[parameters('svcPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2014-06-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[parameters('svcPlanName')]",
+        "sku": "[parameters('svcPlanSKU')]",
+        "workerSize": 0,
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[parameters('emailFunctionAppName')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-06-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('svcPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('svcPlanName'))]": "Resource",
+        "displayName": "[parameters('emailFunctionAppName')]"
+      },
+      "properties": {
+        "name": "[parameters('emailFunctionAppName')]",
+        "serverFarm": "[parameters('svcPlanName')]"
+      },
+      "resources": [
+        {
+          "type": "config",
+          "name": "appsettings",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/', parameters('emailFunctionAppName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName'))]",
+            "[resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventhubsNsName'), 'RootManageSharedAccessKey')]",
+            "[resourceId('Sendgrid.Email/accounts', parameters('sendGridName'))]"
+          ],
+          "properties": {
+            "toAddress": "[parameters('sendGridToAddress')]",
+            "sendgridSmtpServer": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendGridName'))).smtpServer]",
+            "sendgridUsername": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendGridName'))).username]",
+            "sendgridPassword": "[parameters('sendGridPassword')]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName')), '2015-05-01-preview').key1)]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName')), '2015-05-01-preview').key1)]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName')),'2015-05-01-preview').key1)]",
+            "WEBSITE_CONTENTSHARE": "[toLower(parameters('emailFunctionAppName'))]",
+            "EVENTHUBS_CONNECTIONSTRING": "[listkeys(resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventhubsNsName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]",
+            "EVENTHUBS_EH_NAME": "[parameters('eventhubAlertsName')]",
+            "FUNCTIONS_EXTENSION_VERSION": "~1"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/', parameters('emailFunctionAppName'))]",
+            "[resourceId('Microsoft.Web/sites/config', parameters('emailFunctionAppName'), 'appsettings')]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('emailFunctionAppRepoUrl')]",
+            "branch": "[parameters('emailFunctionAppBranch')]",
+            "IsManualIntegration": "[parameters('emailFunctionAppManualIntegration')]"
+          }
+        }
+      ]
     }
   ],
   "outputs": {
@@ -365,6 +471,10 @@
     },
     "eventhubsNsName": {
       "value": "[parameters('eventhubsNsName')]",
+      "type": "string"
+    },
+    "eventhubsAccessKey": {
+      "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventhubsNsName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]",
       "type": "string"
     },
     "eventhubInputName": {
@@ -405,15 +515,15 @@
     },
     "toAddress": {
       "type": "string",
-      "value": "[parameters('toAddress')]"
+      "value": "[parameters('sendGridToAddress')]"
     },
     "sendgridSmtpServer": {
       "type": "string",
-      "value": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendgridAccountName'))).smtpServer]"
+      "value": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendGridName'))).smtpServer]"
     },
     "sendgridUsername": {
       "type": "string",
-      "value": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendgridAccountName'))).username]"
+      "value": "[reference(resourceId('Sendgrid.Email/accounts', parameters('sendGridName'))).username]"
     },
     "sendgridPassword": {
       "type": "string",

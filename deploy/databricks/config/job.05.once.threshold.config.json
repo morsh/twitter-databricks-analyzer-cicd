@@ -1,5 +1,5 @@
 {
-    "name": "Batch - Score using Recommendation Model",
+    "name": "Score using Recommendation Model",
     "new_cluster": {
         "spark_version": "4.1.x-scala2.11",
         "node_type_id": "Standard_D3_v2",
@@ -12,6 +12,11 @@
         {
             "maven": {
                 "coordinates": "com.microsoft.sqlserver:mssql-jdbc:6.5.3.jre8-preview"
+            }
+        },
+        {
+            "maven": {
+                "coordinates": "org.json4s:json4s-native_2.11:3.5.4"
             }
         }
     ],
@@ -27,6 +32,6 @@
         "timezone_id": "Israel"
     },
     "notebook_task": {
-        "notebook_path": "/notebooks/04_daily_trends"
+        "notebook_path": "/notebooks/05_threshold_based_detection"
     }
 }

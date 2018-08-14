@@ -66,29 +66,27 @@ import org.json4s.jackson.JsonMethods._
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
 
 def getLanguage (text: String): String = {
-  val jpayload = parse(s"""
-        {
-          "documents": [
-            {
-              "id": "1",
-              "text": "${escapeJava(text)}"
-            }
-          ]
-        }
-       """, useBigDecimalForDouble = true)
+  val jpayload = 
+     ("documents" -> 
+       List(
+         ("id" -> "1") ~
+         ("text" -> escapeJava(text))
+       ))
   
   val response = processUsingApi(languagesUrl, compact(render(jpayload)))
 
   val jresult = parse(response, useBigDecimalForDouble = true);
   var language = "en"
-  val jlang = (jresult \ "documents") filterField { 
-    case JField("id", JString("1")) => true
-    case _ => false
-  }
 
-  val extractedLanguage = (((jresult \ "documents")(0) \ "detectedLanguages")(0) \ "iso6391Name").extract[String]
-  if (extractedLanguage != null && !extractedLanguage.isEmpty()) {
-    language = extractedLanguage
+  val jdocs = (jresult \ "documents").extract[List[JObject]]
+  if (jdocs.length > 0) {
+    val detectedLanguages = (jdocs(0) \ "detectedLanguages").extract[List[JObject]]
+    if (detectedLanguages.length > 0) {
+      val extractedLanguage = (detectedLanguages(0) \ "iso6391Name").extract[String]
+      if (extractedLanguage != null && !extractedLanguage.isEmpty()) {
+        language = extractedLanguage
+      }
+    }
   }
 
   return language
@@ -96,28 +94,27 @@ def getLanguage (text: String): String = {
 
 def getEntities (text: String): List[String] = {
   val language = getLanguage(text)
-  val jpayload = parse(s"""
-        {
-          "documents": [
-            {
-              "id": "1",
-              "language": "${language}",
-              "text": "${escapeJava(text)}"
-            }
-          ]
-        }
-       """, useBigDecimalForDouble = true)
+  val jpayload = 
+     ("documents" -> 
+       List(
+         ("id" -> "1") ~
+         ("language" -> language) ~
+         ("text" -> escapeJava(text))
+       ))
 
   val response = processUsingApi(entitiesUrl, compact(render(jpayload)))
-  println(response)
-  val jresult = parse(response, useBigDecimalForDouble = true);
-  val jentities = ((jresult \ "documents")(0) \ "entities" \ "name")
+  
   var entities = List("None")
-  if (jentities != JNothing) {
-    if (jentities.isInstanceOf[JString]) {
-      entities = List(jentities.extract[String])
-    } else {
-      entities = jentities.extract[List[String]]
+  val jresult = parse(response, useBigDecimalForDouble = true);
+  val jdocs = (jresult \ "documents").extract[List[JObject]]
+  if (jdocs.length > 0) {
+    val jentities = (jdocs(0) \ "entities" \ "name")
+    if (jentities != JNothing) {
+      if (jentities.isInstanceOf[JString]) {
+        entities = List(jentities.extract[String])
+      } else {
+        entities = jentities.extract[List[String]]
+      }
     }
   }
 
@@ -166,7 +163,7 @@ val enrichedStream = enriched
   .writeStream
   .format("eventhubs")
   .options(ehWriteConf.toMap)
-  .option("checkpointLocation", "/mnt/tmp/03.enrich.chkpnt.tmp")
+  .option("checkpointLocation", "/mnt/tmp/03.enrich.chkpnt-2.tmp")
   .start()
 
 // COMMAND ----------

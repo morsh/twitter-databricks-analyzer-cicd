@@ -1,9 +1,9 @@
 {
-    "run_name": "Windowed Timeline",
+    "run_name": "Save To SQL",
     "new_cluster": {
         "spark_version": "4.1.x-scala2.11",
         "node_type_id": "Standard_D3_v2",
-        "num_workers": 4,
+        "num_workers": 1,
         "spark_env_vars": {
             "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
         }
@@ -17,6 +17,6 @@
     ],
     "timeout_seconds": 3600,
     "notebook_task": {
-        "notebook_path": "/notebooks/05_windowed_topics"
+        "notebook_path": "/notebooks/04_save_to_sql"
     }
 }

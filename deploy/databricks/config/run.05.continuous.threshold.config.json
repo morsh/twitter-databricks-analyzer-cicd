@@ -1,5 +1,5 @@
 {
-    "run_name": "Injests Tweets",
+    "run_name": "Score using Recommendation Model",
     "new_cluster": {
         "spark_version": "4.1.x-scala2.11",
         "node_type_id": "Standard_D3_v2",
@@ -16,12 +16,17 @@
         },
         {
             "maven": {
-                "coordinates": "org.apache.bahir:spark-streaming-twitter_2.11:2.2.0"
+                "coordinates": "com.microsoft.sqlserver:mssql-jdbc:6.5.3.jre8-preview"
+            }
+        },
+        {
+            "maven": {
+                "coordinates": "org.json4s:json4s-native_2.11:3.5.4"
             }
         }
     ],
     "timeout_seconds": 3600,
     "notebook_task": {
-        "notebook_path": "/notebooks/02_twitter_injest"
+        "notebook_path": "/notebooks/05_threshold_based_detection"
     }
 }

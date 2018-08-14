@@ -32,6 +32,7 @@ set -o nounset
 # Set path
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path"
+declare run_quite=${1:-""}
 
 # Constants
 RED='\033[0;31m'
@@ -111,12 +112,18 @@ yes_or_no () {
 }
 
 _main() {
-    echo -e "${ORANGE}"
-    echo -e "!! -- WARNING --!!"
-    echo -e "If this is the second time you are running this, this will re-upload and overwrite existing notebooks with the same names in the 'notebooks' folder. "
-    echo -e "This will also drop and reload data in rating and recommendation Tables."
-    echo -e "${NC}"
-    yes_or_no "Are you sure you want to continue (Y/N)?" || { exit 1; }
+    declare run_quite=${1:-""}
+    if [[ -z $run_quite ]]; then
+        echo -e "${ORANGE}"
+        echo -e "!! -- WARNING --!!"
+        echo -e "If this is the second time you are running this, this will re-upload and overwrite existing notebooks with the same names in the 'notebooks' folder. "
+        echo -e "This will also drop and reload data in rating and recommendation Tables."
+        echo -e "${NC}"
+        yes_or_no "Are you sure you want to continue (Y/N)?" || { exit 1; }  
+    fi
+
+    # Check if databricks is configured and populate the configuration file if not
+    bash ./configure-cli-auth.sh
 
     # Create initial cluster, if not yet exists
     # TODO: Currently should be removed because jobs creates cluster - or remove from jobs
@@ -195,7 +202,7 @@ _main() {
     done
 }
 
-_main
+_main $run_quite
 
 # Use a new name and the token you created manually: 
 # databricks configure --token

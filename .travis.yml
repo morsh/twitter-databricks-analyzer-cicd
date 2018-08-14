@@ -1,0 +1,25 @@
+language: python
+
+python:
+  - "3.4"
+
+virtualenv:
+  system_site_packages: true
+
+sudo: required
+
+addons:
+  apt:
+    update: true
+
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  - .travis/install.sh
+
+before_script:
+  - .travis/login.sh
+
+script:
+  - .travis/test.sh
