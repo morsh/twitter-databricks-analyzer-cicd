@@ -9,7 +9,8 @@ while kill -0 $! >/dev/null 2>&1; do
   echo -n -e " \b" # never leave evidences!
 
   if [ $minutes == $limit ]; then
-    echo "${RED}Test has reached the ${minutes} timeout limit"
+    echo ""
+    echo -e "${RED}Test has reached the ${minutes} timeout limit"
     exit 1
   fi
 
