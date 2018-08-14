@@ -22,4 +22,4 @@ before_script:
   - .travis/login.sh
 
 script:
-  - .travis/test.sh
+  - travis_wait 3 .travis/test.sh
