@@ -3,7 +3,7 @@ make configure_databricks & # send the long living command to background!
 # Constants
 RED='\033[0;31m'
 minutes=0
-limit=20
+limit=30
 
 while kill -0 $! >/dev/null 2>&1; do
   echo -n -e " \b" # never leave evidences!
