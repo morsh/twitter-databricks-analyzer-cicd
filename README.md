@@ -45,6 +45,22 @@ The deployment is done using [Python Virtual Environment](https://docs.python-gu
 - `make lint`: Lint using flake8
 - `make create_environment`: Set up python interpreter environment
 
+# Connect to Travis-CI
+This project displays how to connect [Travis-CI](https://travis-ci.org) to enable continuous integration and e2e validation.
+To achieve that you need to perform the following tasks:
+
+- Make sure to deploy a test environment using the make script
+- Create a new Service Principal on Azure using [azure cli](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?toc=%2Fen-us%2Fazure%2Fazure-resource-manager%2Ftoc.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json&view=azure-cli-latest) or [azure portal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal?view=azure-cli-latest)
+- Make sure to give the service principals permission on you azure subscription
+- Set the following environment variables
+  - `DATABRICKS_ACCESS_TOKEN` - Access Token you created on the databricks portal
+  - `DATABRICKS_URL` - Regional address of databrick, i.e. https://westeurope.azuredatabricks.net
+  - `SERVICE_PRINCIPAL_APP_ID` - Service Principal Application ID
+  - `SERVICE_PRINCIPAL_SUBSCRIPTION_ID` - Service Principal Subscription ID
+  - `SERVICE_PRINCIPAL_PASSWORD` - Service Principal Password/Key
+  - `SERVICE_PRINCIPAL_TENANT_ID` - Tenant ID your resources exist
+- Connect travis ci to your github repo
+
 # Potential Issues
 
 > org.apache.spark.SparkException: Job aborted due to stage failure: Task 0 in stage 145.0 failed 4 times, most recent failure: Lost task 0.3 in stage 145.0 (TID 1958, 10.139.64.4, executor 0): org.apache.spark.SparkException: Failed to execute user defined function($anonfun$9: (string) => string)
