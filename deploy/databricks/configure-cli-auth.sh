@@ -32,7 +32,11 @@ if [[ -f .env ]]; then
   declare DATABRICKS_ACCESS_TOKEN="$DBRICKS_TOKEN"
 fi
 
-declare dbconfig=$(<~/.databrickscfg)
+declare dbconfig=""
+if [[ -f ~/.databrickscfg ]]; then
+  dbconfig=$(<~/.databrickscfg)
+fi
+
 if [[ $dbconfig = *"host = "* && $dbconfig = *"token = "* ]]; then
   echo "file [~/.databrickscfg] is already configured"
 else
