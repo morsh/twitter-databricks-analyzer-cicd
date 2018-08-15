@@ -163,7 +163,7 @@ val enrichedStream = enriched
   .writeStream
   .format("eventhubs")
   .options(ehWriteConf.toMap)
-  .option("checkpointLocation", "/mnt/tmp/03.enrich.chkpnt-2.tmp")
+  .option("checkpointLocation", "/mnt/blob_storage/03.enrich.chkpnt.tmp")
   .start()
 
 // COMMAND ----------
