@@ -1,5 +1,5 @@
 {
-    "cluster_name": "socialcluster",
+    "cluster_name": "interactive-cluster",
     "autoscale": {
         "min_workers": 1,
         "max_workers": 5

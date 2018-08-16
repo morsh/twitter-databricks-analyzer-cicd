@@ -4,7 +4,7 @@ val storage_account = dbutils.preview.secret.get("storage_scope", "storage_accou
 val storage_key = dbutils.preview.secret.get("storage_scope", "storage_key")
 
 // Set mount path
-val storage_mount_path = "/mnt/blob_storage"
+val storage_mount_path = "/mnt/blb"
 
 // Unmount if existing
 for (mp <- dbutils.fs.mounts()) {
