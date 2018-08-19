@@ -452,3 +452,11 @@ include/
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+
+
+## modeling related files, CSVs and datasets
+raw_data/
+exploration/
+datasets/
+plots/
+config.json
