@@ -3,6 +3,7 @@ import java.util._
 import java.util.concurrent._
 import com.microsoft.azure.eventhubs._
 import scala.collection.JavaConverters._
+import collection.JavaConversions._
 
 val queryTwitterTopic = "russia"
 
