@@ -78,15 +78,9 @@ def getLanguage (text: String): String = {
   val jresult = parse(response, useBigDecimalForDouble = true);
   var language = "en"
 
-  val jdocs = (jresult \ "documents").extract[List[JObject]]
-  if (jdocs.length > 0) {
-    val detectedLanguages = (jdocs(0) \ "detectedLanguages").extract[List[JObject]]
-    if (detectedLanguages.length > 0) {
-      val extractedLanguage = (detectedLanguages(0) \ "iso6391Name").extract[String]
-      if (extractedLanguage != null && !extractedLanguage.isEmpty()) {
-        language = extractedLanguage
-      }
-    }
+  val extractedLanguage = (((jresult \ "documents")(0) \ "detectedLanguages")(0) \ "iso6391Name").extract[String]
+  if (extractedLanguage != null && !extractedLanguage.isEmpty()) {
+    language = extractedLanguage
   }
 
   return language
@@ -106,15 +100,14 @@ def getEntities (text: String): List[String] = {
   
   var entities = List("None")
   val jresult = parse(response, useBigDecimalForDouble = true);
-  val jdocs = (jresult \ "documents").extract[List[JObject]]
-  if (jdocs.length > 0) {
-    val jentities = (jdocs(0) \ "entities" \ "name")
-    if (jentities != JNothing) {
-      if (jentities.isInstanceOf[JString]) {
-        entities = List(jentities.extract[String])
-      } else {
-        entities = jentities.extract[List[String]]
-      }
+  
+  val jentities = ((jresult \ "documents")(0) \ "entities" \ "name")
+  var entities = List("None")
+  if (jentities != JNothing) {
+    if (jentities.isInstanceOf[JString]) {
+      entities = List(jentities.extract[String])
+    } else {
+      entities = jentities.extract[List[String]]
     }
   }
 
