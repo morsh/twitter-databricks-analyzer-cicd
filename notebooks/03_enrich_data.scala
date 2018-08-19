@@ -102,7 +102,6 @@ def getEntities (text: String): List[String] = {
   val jresult = parse(response, useBigDecimalForDouble = true);
   
   val jentities = ((jresult \ "documents")(0) \ "entities" \ "name")
-  var entities = List("None")
   if (jentities != JNothing) {
     if (jentities.isInstanceOf[JString]) {
       entities = List(jentities.extract[String])
