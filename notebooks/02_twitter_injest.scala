@@ -52,24 +52,21 @@ val twitter = twitterFactory.getInstance()
 val query = new Query(queryTwitterTopic)
 query.setCount(100)
 query.lang("en")
-var finished = false
+val finished = false
 while (!finished) {
-  val result = twitter.search(query)
-  val statuses = result.getTweets()
-  var lowestStatusId = Long.MaxValue
-  for (status <- statuses.asScala) {
-    if(!status.isRetweet()){
-      sendEvent(status.getText())
+
+  val lowestStatusId = twitter
+    .search(query)
+    .getTweets()
+    .foldLeft(Long.MaxValue) {(currLowestStatusId, status) =>
+      if(!status.isRetweet()) {
+        sendEvent(status.getText())
+      }
+      Thread.sleep(2000)
+      Math.min(status.getId(), currLowestStatusId)
     }
-    lowestStatusId = Math.min(status.getId(), lowestStatusId)
-    Thread.sleep(2000)
-  }
   query.setMaxId(lowestStatusId - 1)
 }
 
-// Closing connection to the Event Hub
-eventHubClient.get().close()
-
-// COMMAND ----------
-
-
+// In case you forcibly want to close the connection to the Event Hub, use the following command:
+// eventHubClient.get().close()

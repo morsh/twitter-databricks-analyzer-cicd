@@ -76,20 +76,15 @@ def getLanguage (text: String): String = {
   val response = processUsingApi(languagesUrl, compact(render(jpayload)))
 
   val jresult = parse(response, useBigDecimalForDouble = true);
-  var language = "en"
+  var language = 
+    (jresult \ "documents").extract[List[JObject]].headOption.flatMap { firstJDoc =>
+      (firstJDoc \ "detectedLanguages").extract[List[JObject]].headOption.map { firstLanguageDetected =>
+        val extractedLanguage = (firstLanguageDetected \ "iso6391Name").extract[String]
+        if (extractedLanguage != null && !extractedLanguage.isEmpty()) extractedLanguage  
+      } 
+    }.getOrElse("en")
 
-  val jdocs = (jresult \ "documents").extract[List[JObject]]
-  if (jdocs.length > 0) {
-    val detectedLanguages = (jdocs(0) \ "detectedLanguages").extract[List[JObject]]
-    if (detectedLanguages.length > 0) {
-      val extractedLanguage = (detectedLanguages(0) \ "iso6391Name").extract[String]
-      if (extractedLanguage != null && !extractedLanguage.isEmpty()) {
-        language = extractedLanguage
-      }
-    }
-  }
-
-  return language
+  language
 }
 
 def getEntities (text: String): List[String] = {
@@ -118,7 +113,7 @@ def getEntities (text: String): List[String] = {
     }
   }
 
-  return entities
+  entities
 }
 
 // getEntities("I had a wonderful trip to Seattle and enjoyed seeing the Space Needle!")
