@@ -13,7 +13,7 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterSource implements SocialSource {
 
-  private final Twitter twitterApi;
+  private Twitter twitterApi;
 
   public TwitterSource(Twitter twitterApi){
     this.twitterApi = twitterApi;

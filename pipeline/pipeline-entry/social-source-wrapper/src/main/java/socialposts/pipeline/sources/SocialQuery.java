@@ -4,6 +4,7 @@ public class SocialQuery {
 
   private String query;
   private String lang;
+  private int count;
 
   public SocialQuery() {
   }
@@ -27,5 +28,13 @@ public class SocialQuery {
 
   public void setQuery(String query) {
     this.query = query;
+  }
+
+  public int getCount() {
+    return count;
+  }
+
+  public void setCount(int count) {
+    this.count = count;
   }
 }
