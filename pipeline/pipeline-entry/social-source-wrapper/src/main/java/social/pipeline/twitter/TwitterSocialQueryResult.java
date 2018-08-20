@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class TwitterSocialQueryResult implements SocialQueryResult {
 
-  private static final String SOURCE_NAME = "Twitter";
+  public static final String SOURCE_NAME = "Twitter";
   private final QueryResult queryResult;
 
   public TwitterSocialQueryResult(QueryResult queryResult) {
@@ -51,6 +51,7 @@ public class TwitterSocialQueryResult implements SocialQueryResult {
       message.setNumOfLikes(status.getFavoriteCount());
       message.setNumOfShares(status.getRetweetCount());
       message.setSource(SOURCE_NAME);
+      message.setShareOrRetweet(status.isRetweet());
       message.setTimestamp(status.getCreatedAt().getTime());
       return message;
     }).collect(Collectors.toList());
@@ -62,6 +63,7 @@ public class TwitterSocialQueryResult implements SocialQueryResult {
     SocialQuery socialQuery = new SocialQuery();
     socialQuery.setLang(query.getLang());
     socialQuery.setQuery(query.getQuery());
+    socialQuery.setCount(query.getCount());
 
     return socialQuery;
   }

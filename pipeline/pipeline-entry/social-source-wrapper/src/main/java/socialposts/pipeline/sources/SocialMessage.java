@@ -5,29 +5,35 @@ import java.util.Map;
 
 public class SocialMessage {
 
-  String text;
-  long timestamp;
-  String source;
-  int numOfShares;
-  int numOfLikes;
-  long id;
-  Map<String,Integer> reactions;
-  List<String> topics;
-  double sentiment;
-
+  private String text;
+  private long timestamp;
+  private String source;
+  private int numOfShares;
+  private int numOfLikes;
+  private boolean isShareOrRetweet;
+  private long id;
+  private Map<String,Integer> reactions;
+  private List<String> topics;
+  private double sentiment;
   public SocialMessage(){
 
   }
-
   public SocialMessage(String text, long timestamp){
     this.text = text;
     this.timestamp = timestamp;
   }
 
-
   public SocialMessage(String text){
     this.text = text;
     this.timestamp = System.currentTimeMillis();
+  }
+
+  public boolean isShareOrRetweet() {
+    return isShareOrRetweet;
+  }
+
+  public void setShareOrRetweet(boolean shareOrRetweet) {
+    isShareOrRetweet = shareOrRetweet;
   }
 
   public String getText() {
