@@ -32,6 +32,8 @@ public class TwitterSource implements SocialSource {
   @Override
   public SocialQueryResult search(SocialQuery query) throws Exception {
     Query twitterQuery = new Query(query.getQuery());
+    twitterQuery.setCount(query.getCount());
+    twitterQuery.setLang(query.getLang());
     QueryResult twitterResult = twitterApi.search(twitterQuery);
     SocialQueryResult res = new TwitterSocialQueryResult(twitterResult);
     return res;

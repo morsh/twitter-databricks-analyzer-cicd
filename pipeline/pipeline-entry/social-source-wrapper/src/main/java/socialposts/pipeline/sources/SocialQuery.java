@@ -13,6 +13,11 @@ public class SocialQuery {
     this.query = query;
   }
 
+  public SocialQuery(String query, int numOfMessages) {
+    this.query = query;
+    this.count = numOfMessages;
+  }
+
   public String getLang() {
     return this.lang;
   }

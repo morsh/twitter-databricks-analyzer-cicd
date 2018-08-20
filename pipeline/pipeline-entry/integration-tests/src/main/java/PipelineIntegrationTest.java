@@ -13,36 +13,27 @@ import java.util.List;
 public class PipelineIntegrationTest {
 
 
-  private void test() throws IOException {
-    List<SocialMessage> testMessages = getTestMessages();
-
-    for(SocialMessage msg : testMessages){
-      System.out.println(msg);
-    }
+  private void test() throws IOException, InterruptedException {
+    //Run pipeline
+    runTestPipeline();
+    //Wait for pipeline to finish by sleeping or by listening to the output eventhubs
+    Thread.sleep(1000*60*10);
+    //Grab results from eventhubs and compare to expected
+    evalutePipelineResult();
 
 
   }
 
-  private List<SocialMessage> getTestMessages() throws IOException {
-    InputStream is =
-      PipelineIntegrationTest.class.getResourceAsStream("/test_messages.json");
-    String jsonTxt = IOUtils.toString(is);
-    JSONArray jsonArray = new JSONArray(jsonTxt);
-
-    List<SocialMessage> messages = new ArrayList();
-
-
-    Iterator iter = jsonArray.iterator();
-    while(iter.hasNext()){
-      JSONObject cur = (JSONObject) iter.next();
-      messages.add(new SocialMessage((String) cur.get("text")));
-    }
-
-    return messages;
-
+  private void runTestPipeline(){
+    System.out.println("Not implemented yet");
   }
 
-  public static void main(String[] args) throws IOException {
+  private void evalutePipelineResult(){
+    System.out.println("Not implemented yet");
+  }
+
+
+  public static void main(String[] args) throws IOException, InterruptedException {
     PipelineIntegrationTest test = new PipelineIntegrationTest();
     test.test();
   }

@@ -11,6 +11,7 @@ public class SocialMessage {
   private int numOfShares;
   private int numOfLikes;
   private boolean isShareOrRetweet;
+  private String lang;
   private long id;
   private Map<String,Integer> reactions;
   private List<String> topics;
@@ -114,5 +115,13 @@ public class SocialMessage {
       "text='" + text + '\'' +
       ", timestamp=" + timestamp +
       '}';
+  }
+
+  public String getLang() {
+    return lang;
+  }
+
+  public void setLang(String lang) {
+    this.lang = lang;
   }
 }

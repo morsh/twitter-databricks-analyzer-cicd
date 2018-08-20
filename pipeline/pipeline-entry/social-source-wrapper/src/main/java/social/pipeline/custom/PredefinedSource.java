@@ -1,5 +1,6 @@
 package social.pipeline.custom;
 
+import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import socialposts.pipeline.sources.SocialMessage;
@@ -10,6 +11,7 @@ import socialposts.pipeline.sources.SocialSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
@@ -48,16 +50,16 @@ public class PredefinedSource implements SocialSource {
     InputStream is =
       PredefinedSource.class.getResourceAsStream(filename);
     String jsonTxt = IOUtils.toString(is);
-    JSONArray jsonArray = new JSONArray(jsonTxt);
+    //JSONArray jsonArray = new JSONArray(jsonTxt);
+    SocialMessage[] messagesArray = new Gson().fromJson(jsonTxt, SocialMessage[].class);
+    List<SocialMessage> messages = Arrays.asList(messagesArray);
 
-    List<SocialMessage> messages = new ArrayList();
-
-
-    Iterator iter = jsonArray.iterator();
-    while(iter.hasNext()){
-      JSONObject cur = (JSONObject) iter.next();
-      messages.add(new SocialMessage((String) cur.get("text")));
-    }
+//
+//    Iterator iter = jsonArray.iterator();
+//    while(iter.hasNext()){
+//      JSONObject cur = (JSONObject) iter.next();
+//      messages.add(new SocialMessage((String) cur.get("text")));
+//    }
 
     return messages;
 

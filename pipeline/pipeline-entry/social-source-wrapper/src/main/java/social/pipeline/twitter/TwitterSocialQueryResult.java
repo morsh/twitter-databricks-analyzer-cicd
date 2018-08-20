@@ -51,6 +51,7 @@ public class TwitterSocialQueryResult implements SocialQueryResult {
       message.setNumOfLikes(status.getFavoriteCount());
       message.setNumOfShares(status.getRetweetCount());
       message.setSource(SOURCE_NAME);
+      message.setLang(status.getLang());
       message.setShareOrRetweet(status.isRetweet());
       message.setTimestamp(status.getCreatedAt().getTime());
       return message;
