@@ -45,7 +45,12 @@ The deployment is done using [Python Virtual Environment](https://docs.python-gu
 - `make lint`: Lint using flake8
 - `make create_environment`: Set up python interpreter environment
 
-# Connect to Travis-CI
+# Integration Tests
+
+Main Assumption: The current design of the integration test pipeline, enables only one test to run e-2-e at any given moment, becuase of shared resources.
+That said, in case the integration tests are able to spin-up/down an entire environment, that would not be an issue, since each test runs on an encapsulated environment.
+
+## Connect to Travis-CI
 This project displays how to connect [Travis-CI](https://travis-ci.org) to enable continuous integration and e2e validation.
 To achieve that you need to perform the following tasks:
 
@@ -66,3 +71,22 @@ To achieve that you need to perform the following tasks:
 > org.apache.spark.SparkException: Job aborted due to stage failure: Task 0 in stage 145.0 failed 4 times, most recent failure: Lost task 0.3 in stage 145.0 (TID 1958, 10.139.64.4, executor 0): org.apache.spark.SparkException: Failed to execute user defined function($anonfun$9: (string) => string)
 
 This issue may be `Caused by: org.apache.http.client.HttpResponseException: Too Many Requests` due to cognitive services throtteling limit on API requests.
+
+> java.util.NoSuchElementException: An error occurred while enumerating the result, check the original exception for details.
+
+> ERROR PoolWatchThread: Error in trying to obtain a connection. Retrying in 7000ms 
+> java.security.AccessControlException: access denied org.apache.derby.security.SystemPermission( 'engine', 'usederbyinternals' )
+
+These issue may be cause by DBR 4+ versions. You get rid of those issues by using the initialization notebook to run the script:
+
+```scala
+// Fix derby permissions
+dbutils.fs.put("/databricks/init/fix-derby-permissions.sh", s"""
+#!/bin/bash
+cat <<EOF > ${System.getProperty("user.home")}/.java.policy
+grant {
+     permission org.apache.derby.security.SystemPermission "engine", "usederbyinternals";
+};
+EOF
+""", true)
+```

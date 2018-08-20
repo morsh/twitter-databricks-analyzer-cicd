@@ -27,6 +27,17 @@ dbutils.fs.mount(
 // Refresh mounts
 dbutils.fs.refreshMounts()
 
+// Fix derby permissions
+dbutils.fs.put("/databricks/init/fix-derby-permissions.sh", s"""
+#!/bin/bash
+cat <<EOF > ${System.getProperty("user.home")}/.java.policy
+grant {
+     permission org.apache.derby.security.SystemPermission "engine", "usederbyinternals";
+};
+EOF
+""", true)
+
+
 // COMMAND ----------
 
 // ===============================
