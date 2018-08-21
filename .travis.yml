@@ -2,6 +2,7 @@ matrix:
   include:
 
     - language: java
+      jdk: openjdk9
       sudo: required
       before_script:
         - cd pipeline/pipeline-entry
