@@ -1,7 +1,8 @@
-matrix:
+jobs:
   include:
 
-    - language: java
+    - stage: build
+      language: java
       jdk: openjdk9
       sudo: false
       before_script:
@@ -9,7 +10,8 @@ matrix:
       script:
         - mvn clean install
 
-    - language: python
+    - stage: deploy
+      language: python
       python: 3.4
       sudo: required
       virtualenv:
