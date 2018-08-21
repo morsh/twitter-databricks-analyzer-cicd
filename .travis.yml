@@ -3,7 +3,7 @@ matrix:
 
     - language: java
       jdk: openjdk9
-      sudo: required
+      sudo: false
       before_script:
         - cd pipeline/pipeline-entry
       script:
