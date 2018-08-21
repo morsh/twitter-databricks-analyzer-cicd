@@ -10,7 +10,7 @@ addons:
 
 before_install:
   - sudo apt-get update -qq
-  - cd src && mvn clean install
+  - mvn -f src/ clean install
 install:
   - .travis/install.sh
 before_script:
