@@ -151,10 +151,8 @@ _main() {
 
     # Upload artifact (uploading to mounted blob storage since databricks' cli doesn't support artifact upload)
     echo "Uploading artifacts..."
-    ls ../../
-    ls ../../src/
-    ls ../../src/social-source-wrapper
-    ls ../../src/social-source-wrapper/target/
+    pwd
+    ls /home/travis/build/morsh/social-posts-pipeline/src/social-source-wrapper/target/
     blob_file_name="social-source-wrapper-1.0-SNAPSHOT.jar"
     blob_local_path="../../src/social-source-wrapper/target/$blob_file_name"
     blob_dbfs_path="dbfs:///mnt/blob/artifacts/social-source-wrapper-1.0-SNAPSHOT.jar" # This path is also included in job runs config json
