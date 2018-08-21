@@ -152,7 +152,7 @@ _main() {
     # Upload artifact (uploading to mounted blob storage since databricks' cli doesn't support artifact upload)
     echo "Uploading artifacts..."
     blob_file_name="social-source-wrapper-1.0-SNAPSHOT.jar"
-    blob_local_path="src/social-source-wrapper/target/$blob_file_name"
+    blob_local_path="../../src/social-source-wrapper/target/$blob_file_name"
     blob_dbfs_path="dbfs:///mnt/blob/artifacts/social-source-wrapper-1.0-SNAPSHOT.jar" # This path is also included in job runs config json
     az storage blob upload -c databricks -f $blob_local_path -n artifacts/$blob_file_name --account-name $BLOB_STORAGE_ACCOUNT --account-key $BLOB_STORAGE_KEY
     databricks libraries install --cluster-id $cluster_id --jar $blob_dbfs_path
