@@ -26,8 +26,6 @@ jobs:
 
       before_install:
         - sudo apt-get update -qq
-        - cd src
-        - mvn clean install
       install:
         - .travis/install.sh
       before_script:
