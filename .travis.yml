@@ -1,34 +1,19 @@
-stages:
-  - build
-  - deploy
+language: python
+jdk: openjdk9
+python: 3.4
+sudo: required
+virtualenv:
+  system_site_packages: true
+addons:
+  apt:
+    update: true
 
-jobs:
-  include:
-
-    - stage: build
-      language: java
-      jdk: openjdk9
-      sudo: false
-      before_script:
-        - cd src
-      script:
-        - mvn clean install
-
-    - stage: deploy
-      language: python
-      python: 3.4
-      sudo: required
-      virtualenv:
-        system_site_packages: true
-      addons:
-        apt:
-          update: true
-
-      before_install:
-        - sudo apt-get update -qq
-      install:
-        - .travis/install.sh
-      before_script:
-        - .travis/login.sh
-      script:
-        - .travis/test.sh
+before_install:
+  - sudo apt-get update -qq
+  - cd src && mvn clean install
+install:
+  - .travis/install.sh
+before_script:
+  - .travis/login.sh
+script:
+  - .travis/test.sh
