@@ -5,7 +5,7 @@ matrix:
       jdk: openjdk9
       sudo: false
       before_script:
-        - cd pipeline/pipeline-entry
+        - cd src
       script:
         - mvn clean install
 

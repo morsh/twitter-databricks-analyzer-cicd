@@ -47,7 +47,7 @@ deploy: deploy_resources create_secrets configure_databricks
 
 ## Build jar files
 build:
-	cd pipeline/pipeline-entry
+	cd src
 	mvn clean install
 
 ## Delete all compiled Python files 
