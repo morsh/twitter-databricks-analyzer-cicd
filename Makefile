@@ -45,6 +45,11 @@ configure_databricks:
 ## Deploys entire solution
 deploy: deploy_resources create_secrets configure_databricks
 
+## Build jar files
+build:
+	cd pipeline/pipeline-entry
+	mvn clean install
+
 ## Delete all compiled Python files 
 clean:
 	find . -type f -name "*.py[co]" -delete

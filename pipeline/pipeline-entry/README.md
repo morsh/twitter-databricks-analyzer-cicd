@@ -1,3 +1,5 @@
 
 install social before integration
-mvn clean install
+This directory contains two projects:
+
+social source wrapper - which is used to encapsulate the logic providing the posts.

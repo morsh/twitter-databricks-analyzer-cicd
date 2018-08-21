@@ -1,25 +1,27 @@
-language: python
+matrix:
+  include:
 
-python:
-  - "3.4"
+    - language: java
+      sudo: required
+      before_script:
+        - cd pipeline/pipeline-entry
+      script:
+        - mvn clean install
 
-virtualenv:
-  system_site_packages: true
+    - language: python
+      python: 3.4
+      sudo: required
+      virtualenv:
+        system_site_packages: true
+      addons:
+        apt:
+          update: true
 
-sudo: required
-
-addons:
-  apt:
-    update: true
-
-before_install:
-  - sudo apt-get update -qq
-
-install:
-  - .travis/install.sh
-
-before_script:
-  - .travis/login.sh
-
-script:
-  - .travis/test.sh
+      before_install:
+        - sudo apt-get update -qq
+      install:
+        - .travis/install.sh
+      before_script:
+        - .travis/login.sh
+      script:
+        - .travis/test.sh
