@@ -10,7 +10,7 @@
     },
     "libraries": [
         {
-            "jar": "dbfs:///mnt/blob/artifacts/social-source-wrapper-1.0-SNAPSHOT.jar"
+            "jar": "dbfs:/mnt/jars/social-source-wrapper-1.0-SNAPSHOT.jar"
         },
         {
             "maven": {
