@@ -157,9 +157,13 @@ _main() {
     blob_local_path="../../src/social-source-wrapper/target/$blob_file_name"
     blob_jars_path="dbfs:/mnt/jars"
     blob_dbfs_path="$blob_jars_path/$blob_file_name"
-    databricks fs mkdirs $blob_jars_path
-    databricks fs cp --overwrite $blob_local_path $blob_dbfs_path
-    databricks libraries install --cluster-id $cluster_id --jar $blob_dbfs_path
+
+    echo "Ensuring directory $blob_jars_path"
+    databricks fs mkdirs "$blob_jars_path"
+    echo "Uploading [$blob_local_path] to [$blob_jars_path]"
+    databricks fs cp --overwrite "$blob_local_path" "$blob_dbfs_path"
+    echo "Installing library [$blob_dbfs_path]"
+    databricks libraries install --cluster-id $cluster_id --jar "$blob_dbfs_path"
 
     # Upload notebooks and dashboards
     echo "Uploading notebooks..."
@@ -203,7 +207,7 @@ _main() {
                 # TODO: socialSource is specific to this project, this parameter should change to test
                 # Adding this paramter to the notebooks, enables each notebook/environment to understand 
                 # its running in a test environment and execute accordingly
-                jobjson=$("$jobjson" | jq '.notebook_task.base_parameters |= { "socialSource": "CUSTOM" }')
+                jobjson=$(echo "$jobjson" | jq '.notebook_task.base_parameters |= { "socialSource": "CUSTOM" }')
             fi
 
             # Descern if the next execution should be continuous or a one time execution and execute accordingly
