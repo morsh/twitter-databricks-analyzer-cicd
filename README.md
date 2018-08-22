@@ -67,6 +67,8 @@ To achieve that you need to perform the following tasks:
   - `SERVICE_PRINCIPAL_TENANT_ID` - Tenant ID your resources exist
 - Connect travis ci to your github repo
 
+The [test.sh](/.travis/test.sh) script, run by Travis, activate the make command `configure_databricks` with an extra parameter of `test=true` which causes the script to execute each notebook with an extra parameter which indicates an e-2-e validation test and enables the environment to execute accordingly.
+
 # Potential Issues
 
 > org.apache.spark.SparkException: Job aborted due to stage failure: Task 0 in stage 145.0 failed 4 times, most recent failure: Lost task 0.3 in stage 145.0 (TID 1958, 10.139.64.4, executor 0): org.apache.spark.SparkException: Failed to execute user defined function($anonfun$9: (string) => string)
