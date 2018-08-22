@@ -40,7 +40,7 @@ create_secrets:
 
 ## Configure Databricks
 configure_databricks:
-	deploy/databricks/configure.sh True
+	deploy/databricks/configure.sh "$(test)"
 
 ## Deploys entire solution
 deploy: deploy_resources create_secrets configure_databricks

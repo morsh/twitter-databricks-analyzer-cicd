@@ -1,4 +1,4 @@
-make configure_databricks & # send the long living command to background!
+make configure_databricks test=true & # send the long living command to background!
 
 # Constants
 RED='\033[0;31m'

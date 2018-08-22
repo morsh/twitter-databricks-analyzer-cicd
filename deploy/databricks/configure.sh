@@ -32,7 +32,7 @@ set -o nounset
 # Set path
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path"
-declare run_quite=${1:-""}
+declare run_test=${1:-""}
 
 # Constants
 RED='\033[0;31m'
@@ -112,14 +112,16 @@ yes_or_no () {
 }
 
 _main() {
-    declare run_quite=${1:-""}
-    if [[ -z $run_quite ]]; then
+    declare run_test=${1:-""}
+    if [[ -z $run_test ]]; then
         echo -e "${ORANGE}"
         echo -e "!! -- WARNING --!!"
         echo -e "If this is the second time you are running this, this will re-upload and overwrite existing notebooks with the same names in the 'notebooks' folder. "
         echo -e "This will also drop and reload data in rating and recommendation Tables."
         echo -e "${NC}"
         yes_or_no "Are you sure you want to continue (Y/N)?" || { exit 1; }  
+    else
+        echo "Running configuration in Test environment"
     fi
 
     # Check if databricks is configured and populate the configuration file if not
@@ -149,12 +151,14 @@ _main() {
     # TODO: python library
     # TODO: generalize to dependency file
 
-    # Upload artifact (uploading to mounted blob storage since databricks' cli doesn't support artifact upload)
+    # Upload artifact to dbfs
     echo "Uploading artifacts..."
     blob_file_name="social-source-wrapper-1.0-SNAPSHOT.jar"
     blob_local_path="../../src/social-source-wrapper/target/$blob_file_name"
-    blob_dbfs_path="dbfs:///mnt/blob/artifacts/social-source-wrapper-1.0-SNAPSHOT.jar" # This path is also included in job runs config json
-    az storage blob upload -c databricks -f $blob_local_path -n artifacts/$blob_file_name --account-name $BLOB_STORAGE_ACCOUNT --account-key $BLOB_STORAGE_KEY
+    blob_jars_path="dbfs:/mnt/jars"
+    blob_dbfs_path="$blob_jars_path/$blob_file_name"
+    databricks fs mkdirs $blob_jars_path
+    databricks fs cp --overwrite $blob_local_path $blob_dbfs_path
     databricks libraries install --cluster-id $cluster_id --jar $blob_dbfs_path
 
     # Upload notebooks and dashboards
@@ -194,13 +198,21 @@ _main() {
                 databricks runs cancel --run-id $id
             done
 
+            declare jobjson=$(cat "$filePath")
+            if [[ ! -z $run_test && $run_test == "true" ]]; then
+                # TODO: socialSource is specific to this project, this parameter should change to test
+                # Adding this paramter to the notebooks, enables each notebook/environment to understand 
+                # its running in a test environment and execute accordingly
+                jobjson=$("$jobjson" | jq '.notebook_task.base_parameters |= { "socialSource": "CUSTOM" }')
+            fi
+
             # Descern if the next execution should be continuous or a one time execution and execute accordingly
             if [[ $runType == 'continuous' ]]; then
                 echo "Running job $jn..."
-                continuousJobs+=($(databricks runs submit --json-file "$filePath" | jq -r ".run_id" ))
+                continuousJobs+=($(databricks runs submit --json "$jobjson" | jq -r ".run_id" ))
             else 
                 echo "Running job $jn and waiting for completion..."
-                wait_for_run $(databricks runs submit --json-file "$filePath" | jq -r ".run_id" )
+                wait_for_run $(databricks runs submit --json "$jobjson" | jq -r ".run_id" )
             fi
         done
     done
@@ -211,7 +223,7 @@ _main() {
     done
 }
 
-_main $run_quite
+_main $run_test
 
 # Use a new name and the token you created manually: 
 # databricks configure --token
