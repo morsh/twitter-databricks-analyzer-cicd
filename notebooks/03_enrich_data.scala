@@ -152,7 +152,7 @@ val enriched = reader
   .select($"body" cast "string", $"enqueuedTime" cast "String" as "timestamp")
   .withColumn("Language", extractLanguage($"body"))
   .withColumn("Entities", extractEntities($"body"))
-  .withColumn("json", toStringJson($"body", $"timestamp", $"Language", $"Entities"))
+  .withColumn("body", toStringJson($"body", $"timestamp", $"Language", $"Entities"))
 
 display(enriched)
 
@@ -163,7 +163,7 @@ val enrichedStream = enriched
   .writeStream
   .format("eventhubs")
   .options(ehWriteConf.toMap)
-  .option("checkpointLocation", "/mnt/blob/03.enrich.chkpnt.tmp")
+  .option("checkpointLocation", "/mnt/blob/03.enrichment.chkpnt.tmp")
   .start()
 
 // COMMAND ----------

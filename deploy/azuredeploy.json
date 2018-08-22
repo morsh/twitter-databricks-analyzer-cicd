@@ -39,21 +39,21 @@
       }
     },
     "eventhubInputName": {
-      "defaultValue": "[concat(parameters('deployNs'), 'ehInput', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[concat(parameters('deployNs'), 'ehinput', uniqueString(resourceGroup().id))]",
       "type": "string",
       "metadata": {
         "description": "Event Hub containing raw data items data"
       }
     },
     "eventhubEnrichedName": {
-      "defaultValue": "[concat(parameters('deployNs'), 'ehEnriched', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[concat(parameters('deployNs'), 'ehenriched', uniqueString(resourceGroup().id))]",
       "type": "string",
       "metadata": {
         "description": "Event Hub containing enriched data items data"
       }
     },
     "eventhubAlertsName": {
-      "defaultValue": "[concat(parameters('deployNs'), 'ehAlerts', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[concat(parameters('deployNs'), 'ehalerts', uniqueString(resourceGroup().id))]",
       "type": "string",
       "metadata": {
         "description": "Event Hub containing alerts data"
