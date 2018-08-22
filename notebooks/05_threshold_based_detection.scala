@@ -89,7 +89,7 @@ val writeAlertsStream = alertStream
   .writeStream
   .format("eventhubs")
   .options(ehWriteConf.toMap)
-  .option("checkpointLocation", "/mnt/blob/05.threshold.chkpnt.tmp")
+  .option("checkpointLocation", "/mnt/blob/05.chk.threshold.tmp")
   .start()
 
 
