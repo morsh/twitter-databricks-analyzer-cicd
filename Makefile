@@ -10,6 +10,7 @@ PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
 PROJECT_NAME = socialDatabricks
 PYTHON_INTERPRETER = python3
+STARTDATETIME = $(shell date +"%Y-%m-%d %H:%M:%S")
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -49,6 +50,20 @@ deploy: deploy_resources create_secrets configure_databricks
 build:
 	cd src
 	mvn clean install
+
+## Run test alerts check
+test_alerts:
+	java -jar src/integration-tests/target/integration-tests-1.0-SNAPSHOT-jar-with-dependencies.jar "$(STARTDATETIME)"
+
+## Load .env file
+load_env_file:
+	echo "Run the following command in the console:"
+	echo "export $$(grep -v '^#' .env | xargs -d '\n')"
+
+## Unload values from env file
+unload_env_file:
+	echo "Run the following command in the console:"
+	echo "unset $$(grep -v '^#' .env | sed -E 's/=.*//' | xargs)"
 
 ## Delete all compiled Python files 
 clean:

@@ -178,6 +178,7 @@ echo "EVENTHUB_INPUT=${eventhub_input_name}" >> $env_file
 echo "EVENTHUB_ENRICHED=${eventhub_enriched_name}" >> $env_file
 echo "EVENTHUB_ALERTS=${eventhub_alerts_name}" >> $env_file
 echo "EVENTHUB_KEY=${eventhubs_key}" >> $env_file
+echo "EVENTHUB_KEY_NAME=RootManageSharedAccessKey" >> $env_file
 echo "TEXTANALYTICS_KEY1=${textanalytics_key1}" >> $env_file
 echo "TEXTANALYTICS_ENDPOINT=${textanalytics_endpoint}" >> $env_file
 echo "DBRICKS_DOMAIN=${dbricks_location}.azuredatabricks.net" >> $env_file
