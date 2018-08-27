@@ -87,7 +87,7 @@ public class ReceiveByDateTime {
 
             try {
                 int receivedCount = 0;
-                while (receivedCount++ < 10) {
+                while (receivedCount++ < 40) {
                     receiver.receive(100).thenAcceptAsync(receivedEvents -> {
                         int batchSize = 0;
                         if (receivedEvents != null) {
@@ -125,7 +125,7 @@ public class ReceiveByDateTime {
                     }, executorService).get();
                 }
 
-                System.out.println("Could not find a contemporary alert for 10 attempts.");
+                System.out.println("Could not find a contemporary alert for 40 attempts.");
                 System.exit(1);
             } finally {
                 // cleaning up receivers is paramount;
