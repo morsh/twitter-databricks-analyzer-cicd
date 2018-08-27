@@ -11,10 +11,10 @@ addons:
 before_install:
   - sudo apt-get update -qq
   - mvn -f src/ clean install
-install:
-  - .travis/install.sh
-before_script:
-  - .travis/login.sh
+# install:
+#   - .travis/install.sh
+# before_script:
+#   - .travis/login.sh
 script:
-  - travis_wait make configure_databricks test=true
+#  - travis_wait make configure_databricks test=true
   - travis_wait make test_alerts
