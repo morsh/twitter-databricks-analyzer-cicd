@@ -19,4 +19,5 @@ while kill -0 $! >/dev/null 2>&1; do
   sleep 60
 done
 
+echo "exit code for script: $?"
 exit $?
