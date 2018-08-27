@@ -2,6 +2,9 @@ language: python
 jdk: openjdk9
 python: 3.4
 sudo: required
+env:
+  global:
+    - TIMEOUT=1000
 virtualenv:
   system_site_packages: true
 addons:
@@ -17,4 +20,4 @@ before_install:
 #   - .travis/login.sh
 script:
   # - .travis/travis_wait_log make configure_databricks test=true
-  - travis_wait make test_alerts
+  - make test_alerts
