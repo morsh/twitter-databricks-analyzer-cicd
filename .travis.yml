@@ -17,7 +17,7 @@ before_install:
 # install:
 #   - .travis/install.sh
 before_script:
-  - STARTDATETIME=$(date +"%Y-%m-%d %H:%M:%S")
+  - export STARTDATETIME=$(date +"%Y-%m-%d %H:%M:%S")
 #   - .travis/login.sh
 script:
   # - .travis/travis_wait_log make configure_databricks test=true
