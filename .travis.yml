@@ -16,8 +16,10 @@ before_install:
   - mvn -f src/ clean install
 # install:
 #   - .travis/install.sh
-# before_script:
+before_script:
+  - STARTDATETIME=$(shell date +"%Y-%m-%d %H:%M:%S")
 #   - .travis/login.sh
 script:
   # - .travis/travis_wait_log make configure_databricks test=true
-  - make test_alerts
+  - echo "$(STARTDATETIME)"
+  - java -jar src/integration-tests/target/integration-tests-1.0-SNAPSHOT-jar-with-dependencies.jar "$(STARTDATETIME)"
