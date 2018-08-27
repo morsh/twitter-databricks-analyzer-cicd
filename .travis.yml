@@ -21,5 +21,5 @@ before_script:
 #   - .travis/login.sh
 script:
   # - .travis/travis_wait_log make configure_databricks test=true
-  - echo "$(STARTDATETIME)"
-  - java -jar src/integration-tests/target/integration-tests-1.0-SNAPSHOT-jar-with-dependencies.jar "$(STARTDATETIME)"
+  - echo "$STARTDATETIME"
+  - java -jar src/integration-tests/target/integration-tests-1.0-SNAPSHOT-jar-with-dependencies.jar "$STARTDATETIME"
