@@ -14,12 +14,11 @@ addons:
 before_install:
   - sudo apt-get update -qq
   - mvn -f src/ clean install
-# install:
-#   - .travis/install.sh
-before_script:
   - export STARTDATETIME=$(date +"%Y-%m-%d %H:%M:%S")
-#   - .travis/login.sh
+ install:
+   - .travis/install.sh
+before_script:
+   - .travis/login.sh
 script:
-  # - .travis/travis_wait_log make configure_databricks test=true
-  - echo "$STARTDATETIME"
+  - make configure_databricks test=true
   - java -jar src/integration-tests/target/integration-tests-1.0-SNAPSHOT-jar-with-dependencies.jar "$STARTDATETIME"
