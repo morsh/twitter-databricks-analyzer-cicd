@@ -65,6 +65,10 @@ To achieve that you need to perform the following tasks:
   - `SERVICE_PRINCIPAL_SUBSCRIPTION_ID` - Service Principal Subscription ID
   - `SERVICE_PRINCIPAL_PASSWORD` - Service Principal Password/Key
   - `SERVICE_PRINCIPAL_TENANT_ID` - Tenant ID your resources exist
+  - `EVENTHUB_NAMESPACE` - The namespace of the event hubs service
+  - `EVENTHUB_KEY_NAME` - The name of the key for authentication (Usually `RootManageSharedAccessKey`)
+  - `EVENTHUB_KEY` - The key value for authentication
+  - `EVENTHUB_ALERTS` - The name of the alerts event hub instance
 - Connect travis ci to your github repo
 
 The [test.sh](/.travis/test.sh) script, run by Travis, activate the make command `configure_databricks` with an extra parameter of `test=true` which causes the script to execute each notebook with an extra parameter which indicates an e-2-e validation test and enables the environment to execute accordingly.

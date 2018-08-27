@@ -13,7 +13,6 @@ import com.microsoft.azure.eventhubs.EventHubRuntimeInformation;
 import com.microsoft.azure.eventhubs.PartitionReceiver;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
