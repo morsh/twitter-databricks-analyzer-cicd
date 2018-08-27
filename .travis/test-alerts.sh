@@ -1,13 +1,14 @@
 set -e
 
 make test_alerts & # send the long living command to background!
+PROC_ID=$!
 
 # Constants
 RED='\033[0;31m'
 minutes=0
 limit=30
 
-while kill -0 $! >/dev/null 2>&1; do
+while kill -0 "$PROC_ID" >/dev/null 2>&1; do
   echo -n -e " \b" # never leave evidences!
 
   if [ $minutes == $limit ]; then
