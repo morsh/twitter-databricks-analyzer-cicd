@@ -126,7 +126,7 @@ public class ReceiveByDateTime {
                 }
 
                 System.out.println("Could not find a contemporary alert for 40 attempts.");
-                System.exit(0);
+                System.exit(1);
             } finally {
                 // cleaning up receivers is paramount;
                 // Quota limitation on maximum number of concurrent receivers per consumergroup
