@@ -1,3 +1,5 @@
+set -e
+
 make test_alerts & # send the long living command to background!
 
 # Constants
