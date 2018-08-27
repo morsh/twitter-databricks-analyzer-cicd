@@ -16,5 +16,5 @@ install:
 before_script:
   - .travis/login.sh
 script:
-  - .travis/test.sh
-  - .travis/test-alerts.sh
+  - travis_wait make configure_databricks test=true
+  - travis_wait make test_alerts

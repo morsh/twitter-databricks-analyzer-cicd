@@ -87,7 +87,7 @@ public class ReceiveByDateTime {
 
             try {
                 int receivedCount = 0;
-                while (receivedCount++ < 50) {
+                while (receivedCount++ < 10) {
                     receiver.receive(100).thenAcceptAsync(receivedEvents -> {
                         int batchSize = 0;
                         if (receivedEvents != null) {
