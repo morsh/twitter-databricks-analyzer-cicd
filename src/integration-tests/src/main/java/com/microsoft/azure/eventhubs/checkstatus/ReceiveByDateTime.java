@@ -92,8 +92,8 @@ public class ReceiveByDateTime {
                         int batchSize = 0;
                         if (receivedEvents != null) {
                             for (EventData receivedEvent : receivedEvents) {
-                                System.out.print(String.format("[%s] Offset: %s, #: %s, Time: %s, PT: %s, ", new Date(),
-                                        receivedEvent.getSystemProperties().getOffset(),
+                                System.out.print(String.format("[%s] Offset: %s, #: %s, Time: %s, PT: %s, ",
+                                        new java.util.Date(), receivedEvent.getSystemProperties().getOffset(),
                                         receivedEvent.getSystemProperties().getSequenceNumber(),
                                         receivedEvent.getSystemProperties().getEnqueuedTime(), partitionId));
 
