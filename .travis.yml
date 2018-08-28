@@ -22,3 +22,5 @@ before_script:
 script:
   - make configure_databricks test=true
   - java -jar src/integration-tests/target/integration-tests-1.0-SNAPSHOT-jar-with-dependencies.jar "$STARTDATETIME"
+after_script:
+  - make test_cleanup

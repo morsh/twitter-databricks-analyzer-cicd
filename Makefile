@@ -65,6 +65,10 @@ unload_env_file:
 	echo "Run the following command in the console:"
 	echo "unset $$(grep -v '^#' .env | sed -E 's/=.*//' | xargs)"
 
+## Test Cleanup
+test_cleanup:
+	deploy/databricks/cleanup.sh
+
 ## Delete all compiled Python files 
 clean:
 	find . -type f -name "*.py[co]" -delete
