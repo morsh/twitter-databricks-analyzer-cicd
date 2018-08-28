@@ -15,7 +15,7 @@ before_install:
   - sudo apt-get update -qq
   - mvn -f src/ clean install
   - export STARTDATETIME=$(date +"%Y-%m-%d %H:%M:%S")
- install:
+install:
    - .travis/install.sh
 before_script:
    - .travis/login.sh
