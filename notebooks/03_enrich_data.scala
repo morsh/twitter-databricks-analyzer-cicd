@@ -46,6 +46,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 // val entitiesUrl = host + entitiesPath
 
 // Using function app stub to get responses for language and topic extraction
+val accessKey = ""
 val host = dbutils.preview.secret.get(scope = "storage_scope", key = "textanalytics_url")
 val languagesPath = "languages"
 val sentimentPath = "sentiment"
