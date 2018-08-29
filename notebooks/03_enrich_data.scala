@@ -31,14 +31,28 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClientBuilder;
 
 // Cognitive Services API connection settings
-val accessKey = dbutils.preview.secret.get(scope = "storage_scope", key = "textanalytics_key1")
-val host = dbutils.preview.secret.get(scope = "storage_scope", key = "textanalytics_endpoint")
-val languagesPath = "/languages"
-val sentimentPath = "/sentiment"
-val entitiesPath = "/entities"
-val languagesUrl = host + languagesPath
-val sentimenUrl = host + sentimentPath
-val entitiesUrl = host + entitiesPath
+// ===============================================================================================
+// Use the following lines instead of the function app stub to get results from cognitive services
+// real API - take under consideration that cognitive services uses throttling to limit the amount
+// of requests you can perform.
+// -----------------------------------------------------------------------------------------------
+// val accessKey = dbutils.preview.secret.get(scope = "storage_scope", key = "textanalytics_key1")
+// val host = dbutils.preview.secret.get(scope = "storage_scope", key = "textanalytics_endpoint")
+// val languagesPath = "/languages"
+// val sentimentPath = "/sentiment"
+// val entitiesPath = "/entities"
+// val languagesUrl = host + languagesPath
+// val sentimenUrl = host + sentimentPath
+// val entitiesUrl = host + entitiesPath
+
+// Using function app stub to get responses for language and topic extraction
+val host = dbutils.preview.secret.get(scope = "storage_scope", key = "textanalytics_url")
+val languagesPath = "languages"
+val sentimentPath = "sentiment"
+val entitiesPath = "entities"
+val languagesUrl = host.replace("{requestType}", languagesPath)
+val sentimenUrl = host.replace("{requestType}", sentimentPath)
+val entitiesUrl = host.replace("{requestType}", entitiesPath)
 
 // Handles the call to Cognitive Services API.
 // Expects Documents as parameters and the address of the API to call.

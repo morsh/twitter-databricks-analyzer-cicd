@@ -156,21 +156,25 @@
         "description": "The pricing tier for the app service plan."
       }
     },
-    "emailFunctionAppName": {
+    "restFunctionAppName": {
       "type": "string",
-      "defaultValue": "[concat(parameters('deployNs'), 'emailfunc', uniqueString(resourceGroup().id))]"
+      "defaultValue": "[concat(parameters('deployNs'), 'restfunc', uniqueString(resourceGroup().id))]"
     },
-    "emailFunctionAppRepoUrl": {
+    "restFunctionAppRepoUrl": {
       "type": "string",
-      "defaultValue": "https://github.com/morsh/social-alert-notifier"
+      "defaultValue": "https://github.com/morsh/social-rest-webapp"
     },
-    "emailFunctionAppBranch": {
+    "restFunctionAppBranch": {
       "type": "string",
       "defaultValue": "master"
     },
-    "emailFunctionAppManualIntegration": {
+    "restFunctionAppManualIntegration": {
       "type": "bool",
       "defaultValue": false
+    },
+    "textAnalyticsFuncName": {
+      "type": "string",
+      "defaultValue": "TextAnalyticsProcessor"
     }
   },
   "variables": {
@@ -398,7 +402,7 @@
       }
     },
     {
-      "name": "[parameters('emailFunctionAppName')]",
+      "name": "[parameters('restFunctionAppName')]",
       "type": "Microsoft.Web/sites",
       "kind": "functionapp",
       "location": "[resourceGroup().location]",
@@ -408,10 +412,10 @@
       ],
       "tags": {
         "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('svcPlanName'))]": "Resource",
-        "displayName": "[parameters('emailFunctionAppName')]"
+        "displayName": "[parameters('restFunctionAppName')]"
       },
       "properties": {
-        "name": "[parameters('emailFunctionAppName')]",
+        "name": "[parameters('restFunctionAppName')]",
         "serverFarm": "[parameters('svcPlanName')]"
       },
       "resources": [
@@ -420,7 +424,7 @@
           "name": "appsettings",
           "apiVersion": "2015-08-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/', parameters('emailFunctionAppName'))]",
+            "[resourceId('Microsoft.Web/sites/', parameters('restFunctionAppName'))]",
             "[resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName'))]",
             "[resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventhubsNsName'), 'RootManageSharedAccessKey')]",
             "[resourceId('Sendgrid.Email/accounts', parameters('sendGridName'))]"
@@ -433,7 +437,7 @@
             "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName')), '2015-05-01-preview').key1)]",
             "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName')), '2015-05-01-preview').key1)]",
             "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storAccountName')),'2015-05-01-preview').key1)]",
-            "WEBSITE_CONTENTSHARE": "[toLower(parameters('emailFunctionAppName'))]",
+            "WEBSITE_CONTENTSHARE": "[toLower(parameters('restFunctionAppName'))]",
             "EVENTHUBS_CONNECTIONSTRING": "[listkeys(resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventhubsNsName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]",
             "EVENTHUBS_EH_NAME": "[parameters('eventhubAlertsName')]",
             "FUNCTIONS_EXTENSION_VERSION": "~1"
@@ -444,13 +448,13 @@
           "name": "web",
           "type": "sourcecontrols",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/', parameters('emailFunctionAppName'))]",
-            "[resourceId('Microsoft.Web/sites/config', parameters('emailFunctionAppName'), 'appsettings')]"
+            "[resourceId('Microsoft.Web/sites/', parameters('restFunctionAppName'))]",
+            "[resourceId('Microsoft.Web/sites/config', parameters('restFunctionAppName'), 'appsettings')]"
           ],
           "properties": {
-            "RepoUrl": "[parameters('emailFunctionAppRepoUrl')]",
-            "branch": "[parameters('emailFunctionAppBranch')]",
-            "IsManualIntegration": "[parameters('emailFunctionAppManualIntegration')]"
+            "RepoUrl": "[parameters('restFunctionAppRepoUrl')]",
+            "branch": "[parameters('restFunctionAppBranch')]",
+            "IsManualIntegration": "[parameters('restFunctionAppManualIntegration')]"
           }
         }
       ]
@@ -528,6 +532,10 @@
     "sendgridPassword": {
       "type": "string",
       "value": "[parameters('sendgridPassword')]"
+    },
+    "textAnalyticsHostName": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('restFunctionAppName'))).defaultHostName]"
     }
   }
 }

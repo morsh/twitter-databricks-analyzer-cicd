@@ -42,6 +42,8 @@ def main():
                             secret_value=os.getenv("TEXTANALYTICS_KEY1"))
     create_or_update_secret(api_url, token, scope, secret_name="textanalytics_endpoint",
                             secret_value=os.getenv("TEXTANALYTICS_ENDPOINT"))
+    create_or_update_secret(api_url, token, scope, secret_name="textanalytics_url",
+                            secret_value=os.getenv("TEXTANALYTICS_URL"))
 
 
     create_or_update_secret(api_url, token, scope, secret_name="sql_server_name",

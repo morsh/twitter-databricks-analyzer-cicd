@@ -148,6 +148,11 @@ eventhubs_key=$(az eventhubs namespace authorization-rule keys list \
 textanalytics_key1=$(echo $arm_output | jq -r '.properties.outputs.textanalyticsKey1.value')
 textanalytics_endpoint=$(echo $arm_output | jq -r '.properties.outputs.textanalyticsEndpoint.value')
 
+# Text analytics - change to use function app since cognitive services' throttling fails the pipeline
+# Getting url for: https://function-app-name.azurewebsites.net/api/{requestType}
+textanalytics_func_name=$(echo $arm_output | jq -r '.properties.outputs.textAnalyticsHostName.value')
+textanalytics_func_url="https://$textanalytics_func_name/api/{requestType}"
+
 # SQL Configuration
 sql_server_name=$(echo $arm_output | jq -r '.properties.outputs.sqlServerName.value')
 sql_database_name=$(echo $arm_output | jq -r '.properties.outputs.sqlDatabaseName.value')
@@ -156,7 +161,7 @@ sql_admin_password=$(echo $arm_output | jq -r '.properties.outputs.sqlServerAdmi
 
 # Create storage container
 dbcontainer=$(az storage container list --account-name $storage_account --account-key $storage_account_key | jq '.[] | select(.name == "databricks")' | jq '.name')
-if [[ ! -z  "${dbcontainer// }"  ]]; then
+if [[ -z  "${dbcontainer// }"  ]]; then
     echo "Creating storage container with name $dbcontainer..."
     container_create_success=$(az storage container create --account-name $storage_account --account-key $storage_account_key --name databricks| jq '.created')
     if [[ $container_create_success == "true" ]]; then
@@ -181,6 +186,7 @@ echo "EVENTHUB_KEY=${eventhubs_key}" >> $env_file
 echo "EVENTHUB_KEY_NAME=RootManageSharedAccessKey" >> $env_file
 echo "TEXTANALYTICS_KEY1=${textanalytics_key1}" >> $env_file
 echo "TEXTANALYTICS_ENDPOINT=${textanalytics_endpoint}" >> $env_file
+echo "TEXTANALYTICS_URL=${textanalytics_func_url}" >> $env_file
 echo "DBRICKS_DOMAIN=${dbricks_location}.azuredatabricks.net" >> $env_file
 echo "DBRICKS_TOKEN=${dbi_token}" >> $env_file
 echo "SQL_SERVER_NAME=${sql_server_name}" >> $env_file
