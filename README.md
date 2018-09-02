@@ -29,6 +29,19 @@ The deployment is done using [Python Virtual Environment](https://docs.python-gu
 
 ## Deploy Entire Solution
 
+- Make sure to create the following file `databricks.env` in the root of the project:
+
+```
+# ------ Constant environment variables to update Databricks -----------
+DBENV_SQL_TABLE_NAME=ItemHistory
+DBENV_SQL_JDBC_PORT=1433
+DBENV_TWITTER_CONSUMER_KEY={FROM_TWITTER}
+DBENV_TWITTER_CONSUMER_SECRET={FROM_TWITTER}
+DBENV_TWITTER_OAUTH_ACCESS_TOKEN={FROM_TWITTER}
+DBENV_TWITTER_OAUTH_TOKEN_SECRET={FROM_TWITTER}
+# --------------------------------------------------------------
+```
+
 - To deploy the solution, simply run `make deploy` and fill in the prompts.
 - When prompted for a Databricks Host, enter the full name of your databricks workspace host, e.g. `https://westeurope.azuredatabricks.net`  (Or change the zone to the one closest to you)
 - When prompted for a token, you can [generate a new token](https://docs.databricks.com/api/latest/authentication.html) in the databricks workspace.
