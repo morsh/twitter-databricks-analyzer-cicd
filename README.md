@@ -110,3 +110,7 @@ grant {
 EOF
 """, true)
 ```
+
+# Additional Links
+
+Code base for REST function app: [https://github.com/morsh/social-rest-webapp](https://github.com/morsh/social-rest-webapp)
