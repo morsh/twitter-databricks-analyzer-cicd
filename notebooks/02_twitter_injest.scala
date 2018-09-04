@@ -3,7 +3,6 @@ import java.util._
 import java.util.concurrent._
 import com.microsoft.azure.eventhubs._
 import scala.collection.JavaConverters._
-import collection.JavaConversions._
 
 val queryTwitterTopic = "russia"
 
@@ -53,21 +52,24 @@ val twitter = twitterFactory.getInstance()
 val query = new Query(queryTwitterTopic)
 query.setCount(100)
 query.lang("en")
-val finished = false
+var finished = false
 while (!finished) {
-
-  val lowestStatusId = twitter
-    .search(query)
-    .getTweets()
-    .foldLeft(Long.MaxValue) {(currLowestStatusId, status) =>
-      if(!status.isRetweet()) {
-        sendEvent(status.getText())
-      }
-      Thread.sleep(2000)
-      Math.min(status.getId(), currLowestStatusId)
+  val result = twitter.search(query)
+  val statuses = result.getTweets()
+  var lowestStatusId = Long.MaxValue
+  for (status <- statuses.asScala) {
+    if(!status.isRetweet()){
+      sendEvent(status.getText())
     }
+    lowestStatusId = Math.min(status.getId(), lowestStatusId)
+    Thread.sleep(2000)
+  }
   query.setMaxId(lowestStatusId - 1)
 }
 
-// In case you forcibly want to close the connection to the Event Hub, use the following command:
-// eventHubClient.get().close()
+// Closing connection to the Event Hub
+eventHubClient.get().close()
+
+// COMMAND ----------
+
+
