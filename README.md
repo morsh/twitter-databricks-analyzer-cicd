@@ -62,7 +62,7 @@ DBENV_TWITTER_OAUTH_TOKEN_SECRET={FROM_TWITTER}
 # Integration Tests
 
 Main Assumption: The current design of the integration test pipeline, enables only one test to run e-2-e at any given moment, becuase of shared resources.
-That said, in case the integration tests are able to spin-up/down an entire environment, that would not be an issue, since each test runs on an encapsulated environment.
+That said, in case the integration tests are able to spin-up/down an entire environment, that would not be an issue, since each test runs on an encapsulated environment. The injest notebook allows you to input a custom source and run the pipeline on this source.
 
 ## Connect to Travis-CI
 This project displays how to connect [Travis-CI](https://travis-ci.org) to enable continuous integration and e2e validation.
