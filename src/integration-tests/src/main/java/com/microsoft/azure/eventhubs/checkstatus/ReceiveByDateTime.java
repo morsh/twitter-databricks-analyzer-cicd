@@ -86,8 +86,10 @@ public class ReceiveByDateTime {
             System.out.println("date-time receiver created...");
 
             try {
-                int receivedCount = 0;
-                while (receivedCount++ < 100) {
+                final LocalDateTime checkupStartTime = LocalDateTime.now();
+
+                // Making sure 15 minutes haven't passed since the test started
+                while (LocalDateTime.now().minusMinutes(15).isAfter(checkupStartTime)) {
                     receiver.receive(100).thenAcceptAsync(receivedEvents -> {
                         int batchSize = 0;
                         if (receivedEvents != null) {
@@ -125,7 +127,7 @@ public class ReceiveByDateTime {
                     }, executorService).get();
                 }
 
-                System.out.println("Could not find a contemporary alert for 100 attempts.");
+                System.out.println("Could not find a contemporary alert for 15 minutes.");
                 System.exit(1);
             } finally {
                 // cleaning up receivers is paramount;
