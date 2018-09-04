@@ -89,7 +89,7 @@ public class ReceiveByDateTime {
                 final LocalDateTime checkupStartTime = LocalDateTime.now();
 
                 // Making sure 15 minutes haven't passed since the test started
-                while (LocalDateTime.now().minusMinutes(15).isAfter(checkupStartTime)) {
+                while (LocalDateTime.now().minusMinutes(15).isBefore(checkupStartTime)) {
                     receiver.receive(100).thenAcceptAsync(receivedEvents -> {
                         int batchSize = 0;
                         if (receivedEvents != null) {
