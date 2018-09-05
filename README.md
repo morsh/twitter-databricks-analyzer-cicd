@@ -64,6 +64,27 @@ DBENV_TWITTER_OAUTH_TOKEN_SECRET={FROM_TWITTER}
 Main Assumption: The current design of the integration test pipeline, enables only one test to run e-2-e at any given moment, becuase of shared resources.
 That said, in case the integration tests are able to spin-up/down an entire environment, that would not be an issue, since each test runs on an encapsulated environment. The injest notebook allows you to input a custom source and run the pipeline on this source.
 
+## Deploying a Test environment
+To create a new secondary environment that's ready for integration testing, it is necessary to deploy a new environment, but there's no need to configure it.
+For that purpose you can run the following commands:
+
+```sh
+make deploy_resources resource-group-name=test-social-rg region=westeurope subscription-id=5b86ec85-0709-4021-b73c-7a089d413ff0
+make create_secrets
+```
+
+Those two commands, will deploy a new environment to Azure, then configure the Databricks environment with the appropriate secrets.
+You will also need to create a local file `databricks.env` in the root of the project, containing:
+
+```
+# ------ Constant environment variables to update Databricks -----------
+DBENV_SQL_TABLE_NAME=ItemHistory
+DBENV_SQL_JDBC_PORT=1433
+# --------------------------------------------------------------
+```
+
+(You can use the full file with the twitter production configuration as well. Those keys will simply be ignored in the test environment).
+
 ## Connect to Travis-CI
 This project displays how to connect [Travis-CI](https://travis-ci.org) to enable continuous integration and e2e validation.
 To achieve that you need to perform the following tasks:
@@ -71,6 +92,7 @@ To achieve that you need to perform the following tasks:
 - Make sure to deploy a test environment using the make script
 - Create a new Service Principal on Azure using [azure cli](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?toc=%2Fen-us%2Fazure%2Fazure-resource-manager%2Ftoc.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json&view=azure-cli-latest) or [azure portal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal?view=azure-cli-latest)
 - Make sure to give the service principals permission on you azure subscription
+- Deploy the test environment to generate an `.env` file
 - Set the following environment variables
   - `DATABRICKS_ACCESS_TOKEN` - Access Token you created on the databricks portal
   - `DATABRICKS_URL` - Regional address of databrick, i.e. https://westeurope.azuredatabricks.net
