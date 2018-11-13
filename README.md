@@ -14,6 +14,7 @@ Ensure you are in the root of the repository and logged in to the Azure cli by r
 
 ## Requirements
 
+- Scripts and installations must be run from **bash** (wether on Windows or other platforms)
 - [Azure CLI 2.0](https://azure.github.io/projects/clis/)
 - [Maven 3.0](https://maven.apache.org/download.cgi) or higher
 - [Python virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/) 
