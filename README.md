@@ -1,6 +1,25 @@
 # Social Posts Pipeline [![Build Status](https://travis-ci.org/morsh/social-posts-pipeline.svg?branch=master)](https://travis-ci.org/morsh/social-posts-pipeline)
 
 The following is a Social Post Sentiment processing pipeline implemented within [Azure Databricks](https://azure.microsoft.com/en-au/services/databricks/). 
+This repo contains a generalized solution for running a social post processor on Azure Data Bricks.
+
+The Data Pipeline consists of:
+- Ingesting tweets from Twitter
+- Enriching tweets with *Language* and *Associated Entities*
+- Identifying recent trends (last 15 minutes)
+- Identifying long term trends (over the span of a week or a month)
+- Saving historical data in an SQL database
+- Sending an email (or triggering an Azure Function event) on new alerts
+
+This repo also integrates a **CI/CD Pipeline** as part of the generalized solution with e-2-e testing.
+The CI/CD Pipeline consists of:
+- TravisCI based process(See [.travis.yml](.travis.yml))
+- A Build Status Tag (To see if the last build/PR is successful or faulty)
+- Building of artifacts
+- Deploying notebooks and artifacts into Azure Databricks test environment (using databricks-cli)
+- Executing the pipeline on test environment
+- Observing the generated alerts to determine success/fail
+- Cleanup solution
 
 ## Data Pipeline Architecture
 ![Pipelin Architecture](/docs/social-pipeline.png)
